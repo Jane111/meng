@@ -1,0 +1,82 @@
+package com.shiyi.meng.controller;
+
+import com.alibaba.fastjson.JSONArray;
+import com.shiyi.meng.service.AServiceL;
+import com.shiyi.meng.service.DeviceServiceZ;
+import com.shiyi.meng.util.BaseResponse;
+import com.shiyi.meng.util.ResultCodeEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigInteger;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/device")
+public class DeviceControllerZ {
+    @Autowired
+    DeviceServiceZ deviceService;
+    @Autowired
+    BaseResponse response;
+
+    //首页显示设备列表
+    @RequestMapping("/getList")
+    public BaseResponse getList(){
+        JSONArray array=new JSONArray();
+        array=deviceService.getDeviceLists();
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+    //首页显示设备类型
+    @RequestMapping("/getTypeList")
+    public BaseResponse getTypeList(){
+        JSONArray array=deviceService.getDeviceType();
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //根据设备类别筛选二手设备
+    @RequestMapping("/selectList")
+    public BaseResponse selectList(
+            @RequestParam("dType") BigInteger dType
+    ){
+        JSONArray array=deviceService.selectList(dType);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //买新的设备列表
+    @RequestMapping("/getNewList")
+    public  BaseResponse getNewList(){
+        JSONArray array=deviceService.getNewList();
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //根据设备类别筛选新设备
+    @RequestMapping("/selectNewList")
+    public BaseResponse selectNewList(
+            @RequestParam("dType") BigInteger dType
+    ){
+        JSONArray array=deviceService.selectNewList(dType);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //发布设备
+    /*@RequestMapping()
+    public BaseResponse putDevice(
+            @RequestParam("")
+    ){
+
+    }*/
+
+}

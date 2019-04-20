@@ -137,4 +137,11 @@ public abstract class BaseDevice<M extends BaseDevice<M>> extends Model<M> imple
 		return get("dModifyTime");
 	}
 
+	public String getDLng(){return get("dLng");}
+
+	public void setDLng(String dLng){set("dLng", dLng);}
+
+	public String getDLat(){ return("dLat");}
+
+	public void setDLat(String dLat){ set("dLat",dLat);}
 }

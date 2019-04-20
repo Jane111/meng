@@ -1,6 +1,7 @@
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.shiyi.meng.model.Device;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.service.DeviceServiceZ;
 import com.shiyi.meng.util.BaseResponse;
@@ -22,11 +23,15 @@ public class DeviceControllerZ {
     @Autowired
     BaseResponse response;
 
-    //首页显示设备列表
+    //首页显示设备列表 根据用户经纬度 计算距离排序
     @RequestMapping("/getList")
-    public BaseResponse getList(){
+    public BaseResponse getList(
+            @RequestParam("uLat") String uLat, //用户纬度
+            @RequestParam("uLng") String uLng, //用户经度
+            @RequestParam("start") String start //开始个数 一次传30个
+    ){
         JSONArray array=new JSONArray();
-        array=deviceService.getDeviceLists();
+        array=deviceService.getDeviceLists(uLat,uLng,start);
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
         return response;
@@ -71,12 +76,44 @@ public class DeviceControllerZ {
         return response;
     }
 
-    //发布设备
-    /*@RequestMapping()
-    public BaseResponse putDevice(
-            @RequestParam("")
+    //发布二手设备
+    @RequestMapping("/putOldDevice")
+    public BaseResponse putOldDevice(
+            @RequestParam("dDcpt") String dDcpt,//设备描述
+            @RequestParam("dPhoto") String dPhoto,//用 ### 隔开
+            @RequestParam("dLat") String dLat,//纬度
+            @RequestParam("dLng") String dLng,//经度
+            @RequestParam("dName") String dName,//设备名称
+            @RequestParam("dType") BigInteger dType,//设备类别
+            @RequestParam("dDegree") Integer dDegree,//新旧程度
+            @RequestParam("dOPrice") Float dOPrice,//原价
+            @RequestParam("dSPrice") Float dSPrice,//售价
+            @RequestParam("dPhone") String dPhone,//联系电话
+            @RequestParam("dPostage") Integer dPostage,//是否包邮
+            @RequestParam("dLocation") String dLocation,//地址
+            @RequestParam("dOtherConnect") String dOtherConnect,//其他联系方式
+            @RequestParam("dOwner") BigInteger dOwner//发布者
     ){
-
-    }*/
+        Device device=new Device();
+        device.setDDcpt(dDcpt);
+        device.setDDegree(dDegree);
+        device.setDPhone(dPhone);
+        device.setDPhoto(dPhoto);
+        device.setDLat(dLat);
+        device.setDLng(dLng);
+        device.setDName(dName);
+        device.setDType(dType);
+        device.setDOPrice(dOPrice);
+        device.setDOwner(dOwner);
+        device.setDSPrice(dSPrice);
+        device.setDPostage(dPostage);
+        device.setDLocation(dLocation);
+        device.setDOtherConnect(dOtherConnect);
+        device.setDHand(2);//二手
+        device.setDStatus(0);//待审核
+        response.setResult(device.save()?ResultCodeEnum.SUCCESS:ResultCodeEnum.ADD_FAILURE);
+        response.setData(device.getDId());//设备id
+        return response;
+    }
 
 }

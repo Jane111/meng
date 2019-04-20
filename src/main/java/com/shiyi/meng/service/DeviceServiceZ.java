@@ -12,10 +12,11 @@ import java.util.List;
 @Service
 public class DeviceServiceZ {
 
-    //获取二手设备列表 根据用户当前位置
-    public JSONArray getDeviceLists() {
+    //获取二手设备列表 根据用户当前位置距离xx公里计算
+    public JSONArray getDeviceLists(String uLat,String uLng,String start) {
         JSONArray showDeivceList = new JSONArray();
-        List<Device> deviceList = Device.dao.find("select * from device dStatus=2 and dHand=2");
+        List<Device> deviceList = Device.dao.find("select * from device dStatus=2 and dHand!=1 " +
+                "order by ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",30");
         //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
         for(Device device:deviceList)
         {
@@ -37,7 +38,7 @@ public class DeviceServiceZ {
 
     //根据设备类型筛选二手
     public JSONArray selectList(BigInteger dType) {
-        String sql="select * from device where dType=?  and dStatus=2 and dHand=2";
+        String sql="select * from device where dType=?  and dStatus=2 and dHand!=1";
         List<Device> deviceList=Device.dao.find(sql,dType);
         JSONArray array=new JSONArray();
         for (Device device:deviceList){

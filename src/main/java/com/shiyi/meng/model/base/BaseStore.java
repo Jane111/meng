@@ -17,6 +17,14 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sId");
 	}
 
+	public void setSUId(java.math.BigInteger sUId) {
+		set("sUId", sUId);
+	}
+
+	public java.math.BigInteger getSUId() {
+		return get("sUId");
+	}
+
 	public void setSColumn(Integer sColumn) {
 		set("sColumn", sColumn);
 	}
@@ -81,11 +89,11 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sType");
 	}
 
-	public void setSAera(String sAera) {
+	public void setSAera(Float sAera) {
 		set("sAera", sAera);
 	}
 
-	public String getSAera() {
+	public Float getSAera() {
 		return get("sAera");
 	}
 
@@ -105,19 +113,19 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sTranMoney");
 	}
 
-	public void setSPayMethod(String sPayMethod) {
+	public void setSPayMethod(Integer sPayMethod) {
 		set("sPayMethod", sPayMethod);
 	}
 
-	public String getSPayMethod() {
+	public Integer getSPayMethod() {
 		return get("sPayMethod");
 	}
 
-	public void setSFloor(String sFloor) {
+	public void setSFloor(Integer sFloor) {
 		set("sFloor", sFloor);
 	}
 
-	public String getSFloor() {
+	public Integer getSFloor() {
 		return get("sFloor");
 	}
 
@@ -143,6 +151,14 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 
 	public String getSPhone() {
 		return get("sPhone");
+	}
+
+	public void setSConName(String sConName) {
+		set("sConName", sConName);
+	}
+
+	public String getSConName() {
+		return get("sConName");
 	}
 
 	public void setSClick(String sClick) {

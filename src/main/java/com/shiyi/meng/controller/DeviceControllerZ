@@ -1,6 +1,7 @@
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.shiyi.meng.model.Device;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.service.DeviceServiceZ;
@@ -116,4 +117,87 @@ public class DeviceControllerZ {
         return response;
     }
 
+    //我发布的设备
+    @RequestMapping("/getMyPublished")
+    public BaseResponse getMyPublished(
+            @RequestParam("uId") String uId
+    ){
+        JSONArray array=deviceService.getMyPublished(uId);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //下架在架设备
+    @RequestMapping("/underCarriage")
+    public BaseResponse underCarriage(
+            @RequestParam("dId") String dId
+    ){
+        if (deviceService.underCarriage(dId)){
+            response.setResult(ResultCodeEnum.SUCCESS);
+            return response;
+        }
+        else {
+            response.setResult(ResultCodeEnum.UPDATE_FAILURE);
+        }
+        return response;
+    }
+
+    //查看已下架设备
+    @RequestMapping("/getMyUnderCarraige")
+    public BaseResponse getMyUnderCarraige(
+            @RequestParam("uId") String uId
+    ){
+        JSONArray array=new JSONArray();
+        array=deviceService.getMyUnderCarraige(uId);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //编辑设备之显示设备信息
+    @RequestMapping("/editShow")
+    public BaseResponse editShow(
+            @RequestParam("dId") String dId
+    ){
+        JSONObject object=deviceService.editShow(dId);
+        response.setData(object);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+
+    //彻底删除
+    @RequestMapping("/deleteUnderCarraige")
+    public BaseResponse deleteUnderCarraige(
+            @RequestParam("dId") String dId
+    ){
+        if (deviceService.deleteUnderCarraige(dId)){
+            response.setResult(ResultCodeEnum.SUCCESS);
+        }
+        else {
+            response.setResult(ResultCodeEnum.DELETE_FAILURE);
+        }
+        return response;
+    }
+
+    //我买到的
+    @RequestMapping("/getMyBill")
+    public BaseResponse getMyBill(
+            @RequestParam("uId") String uId
+    ){
+        JSONArray array=deviceService.getMyBill(uId);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+    //我想要的
+    @RequestMapping("/getMyFollow")
+    public BaseResponse getMyFollow(
+            @RequestParam("uId") String uId
+    ){
+        JSONArray array=deviceService.getMyFollow(uId);
+        response.setData(array);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
 }

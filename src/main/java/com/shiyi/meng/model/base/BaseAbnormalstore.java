@@ -33,12 +33,44 @@ public abstract class BaseAbnormalstore<M extends BaseAbnormalstore<M>> extends 
 		return get("asUser");
 	}
 
+	public void setAsContact(String asContact) {
+		set("asContact", asContact);
+	}
+
+	public String getAsContact() {
+		return get("asContact");
+	}
+
+	public void setAsPhone(String asPhone) {
+		set("asPhone", asPhone);
+	}
+
+	public String getAsPhone() {
+		return get("asPhone");
+	}
+
+	public void setAsType(Integer asType) {
+		set("asType", asType);
+	}
+
+	public String getAsType() {
+		return get("asType");
+	}
+
 	public void setAsReason(String asReason) {
 		set("asReason", asReason);
 	}
 
 	public String getAsReason() {
 		return get("asReason");
+	}
+
+	public void setAsPhoto(String asPhoto) {
+		set("asPhoto", asPhoto);
+	}
+
+	public String getAsPhoto() {
+		return get("asPhoto");
 	}
 
 	public void setAsStatus(Integer asStatus) {

@@ -19,7 +19,7 @@ public enum ResultCodeEnum
 	EXIST_USER_PHONE("10013","手机号已经被注册"),
 	ERROR_ACCOUNT_OR_PASSWORD("10014","账户或密码错误"),
 	NOT_LOGIN("10015", "您还未登录，请先登录！"),
-	EXIST_XOMPANY("10016","该公司已注册"),
+	EXIST_A("10016","该公司已注册"),
 	ADD_FAILURE("20001","添加失败"),
 	DELETE_FAILURE("20003","删除失败"),
 	FIND_FAILURE("20004","查询失败"),

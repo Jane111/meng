@@ -3,7 +3,7 @@ package com.shiyi.meng.util;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.druid.DruidPlugin;
-import com.shiyi.meng.meng._MappingKit;
+import com.shiyi.meng.model._MappingKit;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;

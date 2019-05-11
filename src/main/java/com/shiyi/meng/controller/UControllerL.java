@@ -39,7 +39,6 @@ public class UControllerL {
             @RequestParam("uWeiXinName") String uWeiXinName,
             @RequestParam("uCity") String uCity
     )
-
     {
         // 配置请求参数
         Map<String, String> param = new HashMap<>();

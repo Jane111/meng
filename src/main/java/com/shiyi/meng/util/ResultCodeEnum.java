@@ -11,7 +11,7 @@ public enum ResultCodeEnum
 	ADD_ERROR("10005","添加失败"),
 	DELETE_ERROR("10006","删除失败"),
 	FIND_ERROR("10007","查询失败"),
-	NOT_COMPLETE("10008","参数为空"),
+    DO_NOT_IN_TIME("20007","不在有效时间内刷新"),
 	NOT_ENOUGH_PARA("10009", "请将信息填写完整"),
 	DATA_ERROR("10010","参数格式错误"),
 	EXIST_USER("10011","该学号已存在"),

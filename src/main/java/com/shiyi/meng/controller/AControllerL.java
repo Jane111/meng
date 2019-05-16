@@ -1,10 +1,7 @@
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.shiyi.meng.model.Abnormalstore;
-import com.shiyi.meng.model.Admin;
-import com.shiyi.meng.model.Hint;
-import com.shiyi.meng.model.Store;
+import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.util.BaseResponse;
 import com.shiyi.meng.util.ResultCodeEnum;
@@ -182,6 +179,173 @@ public class AControllerL {
         hint.setHId(hId);
         hint.setHContent(hContent);
         boolean flag = hint.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+
+    //查看定制化找店信息
+    @RequestMapping("/showFindStoreInfo")
+    public BaseResponse showFindStoreInfo()
+    {
+        JSONArray findStoreInfo = aServiceL.findStoreInfo();
+        if(!findStoreInfo.isEmpty())
+        {
+            br.setData(findStoreInfo);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+
+    //显示提交的返款申请
+    @RequestMapping("/showReturnApply")
+    public BaseResponse checkReturnApply()
+    {
+        JSONArray returnApply = aServiceL.showReturnApply();
+        if(!returnApply.isEmpty())
+        {
+            br.setData(returnApply);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+    //同意返款申请
+    @RequestMapping("/agreeReturnApply")
+    public BaseResponse agreeReturnApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(2);//同意返款申请
+        //todo 实际企业进行返款
+        boolean flag = signstore.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //拒绝返款申请
+    @RequestMapping("/refuseReturnApply")
+    public BaseResponse refuseReturnApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(4);//拒绝返款申请
+        boolean flag = signstore.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //查看用户上交押金信息
+    @RequestMapping("/showHandInDeposit")
+    public BaseResponse showHandInDeposit()
+    {
+
+        JSONArray handInDeposit = aServiceL.showHandInDeposit();
+        if(!handInDeposit.isEmpty())
+        {
+            br.setData(handInDeposit);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+    //查看系统返款信息
+    @RequestMapping("/showReturnDeposit")
+    public BaseResponse showReturnDeposit()
+    {
+
+        JSONArray returnDeposit = aServiceL.showReturnDeposit();
+        if(!returnDeposit.isEmpty())
+        {
+            br.setData(returnDeposit);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+
+    //显示提交的退款申请
+    @RequestMapping("/showTuiApply")
+    public BaseResponse showTuiApply()
+    {
+        JSONArray tuiApply = aServiceL.showTuiApply();
+        if(!tuiApply.isEmpty())
+        {
+            br.setData(tuiApply);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+    //同意退款申请
+    @RequestMapping("/agreeTuiApply")
+    public BaseResponse agreeTuiApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(3);//同意退款申请
+        //todo 实际企业进行返款
+        boolean flag = signstore.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //拒绝退款申请
+    @RequestMapping("/refuseTuiApply")
+    public BaseResponse refuseTuiApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(5);//拒绝退款申请
+        boolean flag = signstore.update();
         if(flag)
         {
             br.setResult(ResultCodeEnum.SUCCESS);

@@ -16,25 +16,27 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 public class _MappingKit {
 
 	public static void mapping(ActiveRecordPlugin arp) {
-		arp.addMapping("cityloc", "clId", Cityloc.class);
 		arp.addMapping("abnormalstore", "asId", Abnormalstore.class);
+		arp.addMapping("admin", "aId", Admin.class);
 		arp.addMapping("advert", "aId", Advert.class);
 		arp.addMapping("bill", "bId", Bill.class);
+		arp.addMapping("cityloc", "clId", Cityloc.class);
 		arp.addMapping("contracttemplate", "ctId", Contracttemplate.class);
 		arp.addMapping("device", "dId", Device.class);
 		arp.addMapping("devicebusiness", "dbId", Devicebusiness.class);
 		arp.addMapping("devicetype", "dtId", Devicetype.class);
+		arp.addMapping("findstore", "fdId", Findstore.class);
 		arp.addMapping("followdevice", "fdId", Followdevice.class);
 		arp.addMapping("followstore", "fsId", Followstore.class);
 		arp.addMapping("hint", "hId", Hint.class);
 		arp.addMapping("platbill", "pbId", Platbill.class);
 		arp.addMapping("searchrecord", "srId", Searchrecord.class);
 		arp.addMapping("signstore", "ssId", Signstore.class);
+		arp.addMapping("stopdeal", "sdId", Stopdeal.class);
 		arp.addMapping("store", "sId", Store.class);
 		arp.addMapping("storeloc", "slId", Storeloc.class);
 		arp.addMapping("transfermoney", "tmId", Transfermoney.class);
 		arp.addMapping("user", "uId", User.class);
-		arp.addMapping("admin", "aId", Admin.class);
 		arp.addMapping("usercontract", "ucId", Usercontract.class);
 		arp.addMapping("voucher", "vId", Voucher.class);
 	}

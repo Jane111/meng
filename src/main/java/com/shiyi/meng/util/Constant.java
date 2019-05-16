@@ -10,6 +10,11 @@ public class Constant {
 	public static final String APPSECRET="3fa1771b7860267bbcc74c15e6b2044e";
 	public static final String GRANTTYPE="authorization_code";
 
+    /*微信小程序支付相关信息*/
+	public static String MCH_ID = "1530460071";//商户号
+	public static String NOTIFY_URL = "localhost:8080/user/wxProPayNotify";//回调地址
+	public static String KEY = "2cb6b821ae8dbd38fa5e4f80f72b32c9";//API密钥，交易过程中生成签名的密钥
+
 	//图像存储相关信息
 //	public static  final String Secret_id="AKID0jJtXvZOlMn7RVnncuQtJn1zgOyIHFWK";
 //	public static final String Secret_key="FzUgdXUmobAwSsIWtQG8l8HI3cy3A4jC";

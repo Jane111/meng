@@ -5,20 +5,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Db;
 import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.UServiceL;
-import com.shiyi.meng.util.BaseResponse;
-import com.shiyi.meng.util.Constant;
-import com.shiyi.meng.util.HttpClientUtil;
-import com.shiyi.meng.util.ResultCodeEnum;
+import com.shiyi.meng.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.basic.BasicEditorPaneUI;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -283,7 +282,7 @@ public class UControllerL {
         return br;
     }
 
-    //点击按钮使店铺更新
+    //刷新置顶
     @RequestMapping("/updateStoreRank")
     public BaseResponse updateStoreRank(
             @RequestParam("sId") BigInteger sId
@@ -291,21 +290,29 @@ public class UControllerL {
     {
         //得到sId对应的store
         Store pastStore = Store.dao.findById(sId);
-        Store store = new Store();
-        store.setSId(sId);
-        store.setSFlushTime(pastStore.getSFlushTime().add(new BigInteger("1")));
-        boolean flag = store.update();//更新店铺修改时间
-        if(flag)
+        Date now = new Date();
+        Date modifyTime=pastStore.getSModifyTime();
+        Date beforFive=new Date(now.getTime() - 300000);
+        if(modifyTime.before(beforFive)||pastStore.getSFlushTime().equals(new BigInteger("0")))
         {
-            br.setResult(ResultCodeEnum.SUCCESS);
-        }
-        else
+            pastStore.setSFlushTime(pastStore.getSFlushTime().add(new BigInteger("1")));
+            boolean flag = pastStore.update();//更新店铺修改时间
+            if(flag)
+            {
+                br.setResult(ResultCodeEnum.SUCCESS);
+            }
+            else
+            {
+                br.setResult(ResultCodeEnum.UPDATE_ERROR);
+            }
+        }else
         {
-            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+            br.setResult(ResultCodeEnum.DO_NOT_IN_TIME);
         }
         br.setData(null);
         return br;
     }
+
     //查看店铺详情
     @RequestMapping("/showStoreDetail")
     public BaseResponse showStoreDetail(
@@ -443,13 +450,13 @@ public class UControllerL {
         return br;
     }
 
-    //查看用户签约的店铺列表
-    @RequestMapping("/showSignStoreList")
-    public BaseResponse showSignStoreList(
+    //查看用户签约的店铺列表-上交押金
+    @RequestMapping("/showSignStoreListByMoney")
+    public BaseResponse showSignStoreListByMoney(
             @RequestParam("uId") BigInteger uId
     )
     {
-        JSONArray signStoreList = uServiceL.getSignStoreList(uId);
+        JSONArray signStoreList = uServiceL.getSignStoreListByMoney(uId);
         if(!signStoreList.isEmpty())
         {
             br.setData(signStoreList);
@@ -461,6 +468,26 @@ public class UControllerL {
         }
         return br;
     }
+
+    //查看用户签约的店铺列表-上交押金
+    @RequestMapping("/showSignStoreListByContract")
+    public BaseResponse showSignStoreListByContract(
+            @RequestParam("uId") BigInteger uId
+    )
+    {
+        JSONArray signStoreList = uServiceL.getSignStoreListByContract(uId);
+        if(!signStoreList.isEmpty())
+        {
+            br.setData(signStoreList);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+
     //搜索店铺，根据店铺名称
     @RequestMapping("/searchStoreByName")
     public BaseResponse searchStoreByName(
@@ -617,6 +644,7 @@ public class UControllerL {
         }
         return br;
     }
+    //删除某个用户所有记录
     @RequestMapping("/deleteUserSearchRecord")
     public BaseResponse deleteUserSearchRecord(
             @RequestParam("uId") BigInteger uId
@@ -648,7 +676,7 @@ public class UControllerL {
         }else
         {
             br.setData(null);
-            br.setResult(ResultCodeEnum.DELETE_ERROR);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
         }
         return br;
     }
@@ -666,8 +694,290 @@ public class UControllerL {
         }else
         {
             br.setData(null);
-            br.setResult(ResultCodeEnum.DELETE_ERROR);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
         }
         return br;
+    }
+
+    //发布定制化找店信息
+    @RequestMapping("/addFindStoreInfo")
+    public BaseResponse addFindStoreInfo(
+            @RequestParam("fdUser") BigInteger fdUser,
+            @RequestParam("fdCommand") String fdCommand,
+            @RequestParam("fdPhone") String fdPhone,
+            @RequestParam("fdName") String fdName
+    )
+    {
+        Findstore findstore = new Findstore();
+        findstore.setFdUser(fdUser);
+        findstore.setFdCommand(fdCommand);
+        findstore.setFdPhone(fdPhone);
+        findstore.setFdName(fdName);
+        boolean flag = findstore.save();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);//添加成功
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);//添加失败
+        }
+        br.setData(null);
+        return br;
+    }
+
+    //上传合同照片
+    @RequestMapping("/addUserContract")
+    public BaseResponse addUserContract(
+            @RequestParam("ucOwner") BigInteger ucOwner,
+            @RequestParam("ucContent") String ucContent,
+            @RequestParam("ucStore") BigInteger ucStore
+    )
+    {
+        Usercontract usercontract = new Usercontract();
+        usercontract.setUcOwner(ucOwner);
+        usercontract.setUcContent(ucContent);
+        usercontract.setUcStore(ucStore);
+        boolean flag = usercontract.save();//将该用户合同加入数据库
+
+        /*修改店铺状态*/
+        Store store = Store.dao.findById(ucStore);
+        store.setSStatus(4);//该店铺在交易过程中
+        store.update();
+
+        /*将该店铺设为用户签约过的店铺*/
+        Signstore signstore = new Signstore();
+        signstore.setSsUser(ucOwner);
+        signstore.setSsStore(ucStore);
+        signstore.setSsIsContract(1);//该签约店铺上传了合同
+        signstore.save();
+
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);//添加成功
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);//添加失败
+        }
+        br.setData(null);
+        return br;
+    }
+
+    //得到用户上交押金总数
+    @RequestMapping("/getTotalDeposit")
+    public BaseResponse getTotalDeposit(
+            @RequestParam("tmFrom") BigInteger tmFrom
+    )
+    {
+        //得到平台转账表
+        List<Transfermoney> transfermonies = Transfermoney.dao.find("select * from transfermoney " +
+                "where tmfrom=?",tmFrom);
+        if(transfermonies.isEmpty())
+        {
+            br.setData(0);
+        }else
+        {
+            Float totalDesposit = 0f;
+            for(Transfermoney tr:transfermonies)
+            {
+                totalDesposit+=tr.getTmMoney();
+            }
+            br.setData(totalDesposit);
+        }
+        br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
+
+    //提交终止交易相关信息
+    @RequestMapping("/addStopDealInfo")
+    public BaseResponse addStopDealInfo(
+            @RequestParam("sdUser") BigInteger sdUser,
+            @RequestParam("sdStore") BigInteger sdStore,
+            @RequestParam("sdProblem") String sdProblem,
+            @RequestParam("sdPhoto") String sdPhoto,
+            @RequestParam("sdApplyName") String sdApplyName,
+            @RequestParam("sdApplyNum") String sdApplyNum,
+            @RequestParam("sdApplyPhone") String sdApplyPhone
+    )
+    {
+        Stopdeal stopdeal = new Stopdeal();
+        stopdeal.setSdUser(sdUser);
+        stopdeal.setSdStore(sdStore);
+        stopdeal.setSdProblem(sdProblem);
+        stopdeal.setSdPhoto(sdPhoto);
+        stopdeal.setSdApplyName(sdApplyName);
+        stopdeal.setSdApplyNum(sdApplyNum);
+        stopdeal.setSdApplyPhone(sdApplyPhone);
+        boolean flag = stopdeal.save();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //显示所有提示信息
+    @RequestMapping("/showAllHint")
+    public BaseResponse showAllHint()
+    {
+        JSONArray allHint = uServiceL.findAllHint();
+        if(!allHint.isEmpty())
+        {
+            br.setData(allHint);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+    //显示某个用户交易记录
+    @RequestMapping("/showUserBill")
+    public BaseResponse showUserBill(
+            @RequestParam("uId") BigInteger uId
+    )
+    {
+        JSONArray allBill = uServiceL.findAllBill(uId);
+        if(!allBill.isEmpty())
+        {
+            br.setData(allBill);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+
+
+    @RequestMapping("/createOrder")
+    public BaseResponse createOrder(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("money") BigDecimal money
+    ){
+
+        //调用接口获取openId
+        String openId = User.dao.findById(uId).getUCOpenId();
+        Map<String, String> reqParams = new HashMap<>();
+        //订单号  uuid
+        //封装JDK自带的UUID, 通过Random数字生成, 中间无-分割.
+        String outTradeNo= UUID.randomUUID().toString().replaceAll("-", "");
+        Map<String, String> result = new HashMap<>();
+        try {
+            result = uServiceL.unifiedOrder(outTradeNo,money,openId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        br.setData(result);
+        br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
+
+    //记录用户上交押金的记录
+    @RequestMapping("/addPayOrder")
+    public BaseResponse addPayOrder(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("sId") BigInteger sId,
+            @RequestParam("money") Float money
+    ){
+        Transfermoney transfermoney = new Transfermoney();
+        transfermoney.setTmFrom(uId);//tmfrom 为uId
+        transfermoney.setTmTo(new BigInteger("0"));//tmto 为0，表示平台
+        transfermoney.setTmStore(sId);
+        transfermoney.setTmMoney(money);
+        boolean flag = transfermoney.save();
+
+        /*修改店铺状态*/
+        Store store = Store.dao.findById(sId);
+        store.setSStatus(4);//该店铺在交易过程中
+        store.update();
+
+        /*将该店铺设为用户签约过的店铺*/
+        Signstore signstore = new Signstore();
+        signstore.setSsUser(uId);
+        signstore.setSsStore(sId);
+        signstore.setSsIsMoney(1);//该签约店铺上交押金
+        signstore.save();
+
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //提交返款申请
+    @RequestMapping("/addReturnApply")
+    public BaseResponse addReturnApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(0);//交易成功提交返款
+        boolean flag = signstore.update();
+        if(flag)
+        {
+            br.setData(ResultCodeEnum.SUCCESS);//修改状态成功
+        }else
+        {
+            br.setData(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
+        }
+        br.setData(null);
+        return br;
+    }
+    //提交退款申请
+    @RequestMapping("/addTuiApply")
+    public BaseResponse addTuiApply(
+            @RequestParam("ssId") BigInteger ssId
+    )
+    {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(1);//交易失败提交退款
+        boolean flag = signstore.update();
+        if(flag)
+        {
+            br.setData(ResultCodeEnum.SUCCESS);//修改状态成功
+        }else
+        {
+            br.setData(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
+        }
+        br.setData(null);
+        return br;
+    }
+
+    /**
+     * 功能描述: <小程序回调>
+     * @return:
+     * @auther: majker
+     * @date: 2019/3/10
+     **/
+    @RequestMapping("/wxProPayNotify")
+    public void wxProPayNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        //进入微信小程序支付回调
+        String xmlMsg = HttpKit.readData(request);
+        System.out.println("微信小程序通知信息" + xmlMsg);
+        Map<String, String> resultMap = PaymentKit.xmlToMap(xmlMsg);
+        if (resultMap.get("RETURN_CODE").equals("SUCCESS")) {
+            String orderNo = resultMap.get("out_trade_no");
+            System.out.println("微信小程序支付成功,订单号" + orderNo);
+            /**
+             *   通过订单号 修改数据库中的记录，此处省略n行代码
+             */
+        }
+        String result = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+        try {
+            response.getWriter().write(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

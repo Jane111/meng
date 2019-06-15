@@ -49,6 +49,14 @@ public abstract class BaseFindstore<M extends BaseFindstore<M>> extends Model<M>
 		return get("fdName");
 	}
 
+	public void setFdStatus(Integer fdStatus) {
+		set("fdStatus", fdStatus);
+	}
+
+	public Integer getFdStatus() {
+		return get("fdStatus");
+	}
+
 	public void setFdCreateTime(java.util.Date fdCreateTime) {
 		set("fdCreateTime", fdCreateTime);
 	}

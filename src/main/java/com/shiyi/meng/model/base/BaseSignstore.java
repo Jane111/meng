@@ -63,7 +63,7 @@ public abstract class BaseSignstore<M extends BaseSignstore<M>> extends Model<M>
         set("ssStopDeal", ssStopDeal);
     }
 
-    public Integer getSsStopDeal() {
+    public BigInteger getSsStopDeal() {
         return get("ssStopDeal");
     }
 

@@ -469,7 +469,7 @@ public class UControllerL {
         return br;
     }
 
-    //查看用户签约的店铺列表-上交押金
+    //查看用户签约的店铺列表-上传合同
     @RequestMapping("/showSignStoreListByContract")
     public BaseResponse showSignStoreListByContract(
             @RequestParam("uId") BigInteger uId
@@ -713,6 +713,7 @@ public class UControllerL {
         findstore.setFdCommand(fdCommand);
         findstore.setFdPhone(fdPhone);
         findstore.setFdName(fdName);
+        findstore.setFdStatus(0);//初始发布，设置为“0-未完成”状态
         boolean flag = findstore.save();
         if(flag)
         {
@@ -749,6 +750,7 @@ public class UControllerL {
         signstore.setSsUser(ucOwner);
         signstore.setSsStore(ucStore);
         signstore.setSsIsContract(1);//该签约店铺上传了合同
+        signstore.setSsStatus(6);//设置为正在交易的状态
         signstore.save();
 
         if(flag)
@@ -808,9 +810,12 @@ public class UControllerL {
         stopdeal.setSdApplyNum(sdApplyNum);
         stopdeal.setSdApplyPhone(sdApplyPhone);
         boolean flag = stopdeal.save();
+        JSONObject returnData = new JSONObject();
+        returnData.put("sdId",stopdeal.getSdId());
         if(flag)
         {
             br.setResult(ResultCodeEnum.SUCCESS);
+            br.setData(returnData);
         }else
         {
             br.setResult(ResultCodeEnum.ADD_ERROR);
@@ -901,6 +906,7 @@ public class UControllerL {
         signstore.setSsUser(uId);
         signstore.setSsStore(sId);
         signstore.setSsIsMoney(1);//该签约店铺上交押金
+        signstore.setSsStatus(6);//设置为正在交易的状态
         signstore.save();
 
         if(flag)
@@ -936,12 +942,14 @@ public class UControllerL {
     //提交退款申请
     @RequestMapping("/addTuiApply")
     public BaseResponse addTuiApply(
-            @RequestParam("ssId") BigInteger ssId
+            @RequestParam("ssId") BigInteger ssId,
+            @RequestParam("sdId") BigInteger sdId
     )
     {
         Signstore signstore = new Signstore();
         signstore.setSsId(ssId);
         signstore.setSsStatus(1);//交易失败提交退款
+        signstore.setSsStopDeal(sdId);//连接到退款乱申请具体信息页面
         boolean flag = signstore.update();
         if(flag)
         {

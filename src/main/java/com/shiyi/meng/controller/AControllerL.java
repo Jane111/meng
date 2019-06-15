@@ -192,9 +192,11 @@ public class AControllerL {
 
     //查看定制化找店信息
     @RequestMapping("/showFindStoreInfo")
-    public BaseResponse showFindStoreInfo()
+    public BaseResponse showFindStoreInfo(
+            @RequestParam("fdStatus") Integer fdStatus
+    )
     {
-        JSONArray findStoreInfo = aServiceL.findStoreInfo();
+        JSONArray findStoreInfo = aServiceL.findStoreInfo(fdStatus);
         if(!findStoreInfo.isEmpty())
         {
             br.setData(findStoreInfo);
@@ -204,6 +206,45 @@ public class AControllerL {
             br.setData(null);
             br.setResult(ResultCodeEnum.FIND_ERROR);
         }
+        return br;
+    }
+
+    //修改定制化找店信息
+    @RequestMapping("/updateFindStoreInfo")
+    public BaseResponse updateFindStoreInfo(
+            @RequestParam("fdId") BigInteger fdId
+    )
+    {
+        Findstore findstore  = Findstore.dao.findById(fdId);
+        findstore.setFdStatus(1);//设置为“1-已完成”状态
+        boolean flag = findstore.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+
+    //删除定制化找店信息
+    @RequestMapping("/deleteFindStoreInfo")
+    public BaseResponse deleteFindStoreInfo(
+            @RequestParam("fdId") BigInteger fdId
+    )
+    {
+        Findstore findstore  = Findstore.dao.findById(fdId);
+        boolean flag = findstore.delete();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.DELETE_ERROR);
+        }
+        br.setData(null);
         return br;
     }
 

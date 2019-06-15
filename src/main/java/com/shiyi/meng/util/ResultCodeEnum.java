@@ -24,9 +24,10 @@ public enum ResultCodeEnum
 	DELETE_FAILURE("20003","删除失败"),
 	FIND_FAILURE("20004","查询失败"),
 	UPDATE_FAILURE("20005","修改失败"),
-	DO_NOT_HAVE_RIGHT("20006","没有权限申请");
+	DO_NOT_HAVE_RIGHT("20006","没有权限申请"),
+    HAS_REGISTER("20008","已经申请入驻过");
 
-	private String code;
+    private String code;
     private String desc;
 
     ResultCodeEnum(String code, String desc)

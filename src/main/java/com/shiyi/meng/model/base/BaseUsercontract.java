@@ -35,11 +35,11 @@ public abstract class BaseUsercontract<M extends BaseUsercontract<M>> extends Mo
 		return get("ucContent");
 	}
 
-	public void setUcStore(BigInteger ucStore) {
+	public void setUcStore(java.math.BigInteger  ucStore) {
 		set("ucStore", ucStore);
 	}
 
-	public BigInteger getUcStore() {
+	public java.math.BigInteger  getUcStore() {
 		return get("ucStore");
 	}
 
@@ -59,4 +59,7 @@ public abstract class BaseUsercontract<M extends BaseUsercontract<M>> extends Mo
 		return get("ucModifyTime");
 	}
 
+	public  void setUcStatus(int ucStatus){set("ucStatus", ucStatus);}
+
+	public  int getUcStatus(){return get("ucStatus");}
 }

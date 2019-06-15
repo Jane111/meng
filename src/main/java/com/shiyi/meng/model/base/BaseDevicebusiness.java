@@ -17,6 +17,30 @@ public abstract class BaseDevicebusiness<M extends BaseDevicebusiness<M>> extend
 		return get("dbId");
 	}
 
+	public void setDbImg(String dbImg) {
+		set("dbImg", dbImg);
+	}
+
+	public String getDbImg() {
+		return get("dbImg");
+	}
+
+	public void setDbDcpt(String dbDcpt) {
+		set("dbDcpt", dbDcpt);
+	}
+
+	public String getDbDcpt() {
+		return get("dbDcpt");
+	}
+
+	public void setDbOtherConnect(String dbOtherConnect) {
+		set("dbOtherConnect", dbOtherConnect);
+	}
+
+	public String getDbOtherConnect() {
+		return get("dbOtherConnect");
+	}
+
 	public void setDbUser(java.math.BigInteger dbUser) {
 		set("dbUser", dbUser);
 	}
@@ -41,20 +65,28 @@ public abstract class BaseDevicebusiness<M extends BaseDevicebusiness<M>> extend
 		return get("dbLoc");
 	}
 
-	public void setDbLng(Integer dbLng) {
+	public void setDbLng(String dbLng) {
 		set("dbLng", dbLng);
 	}
 
-	public Integer getDbLng() {
+	public String getDbLng() {
 		return get("dbLng");
 	}
 
-	public void setDbLat(Integer dbLat) {
+	public void setDbLat(String dbLat) {
 		set("dbLat", dbLat);
 	}
 
-	public Integer getDbLat() {
+	public String getDbLat() {
 		return get("dbLat");
+	}
+
+	public void setDbOtherType(int dbOtherType) {
+		set("dbOtherType", dbOtherType);
+	}
+
+	public int getDbOtherType() {
+		return get("dbOtherType");
 	}
 
 	public void setDbName(String dbName) {
@@ -73,11 +105,11 @@ public abstract class BaseDevicebusiness<M extends BaseDevicebusiness<M>> extend
 		return get("dbPhone");
 	}
 
-	public void setDbDeviceType(java.math.BigInteger dbDeviceType) {
+	public void setDbDeviceType(String dbDeviceType) {
 		set("dbDeviceType", dbDeviceType);
 	}
 
-	public java.math.BigInteger getDbDeviceType() {
+	public String getDbDeviceType() {
 		return get("dbDeviceType");
 	}
 

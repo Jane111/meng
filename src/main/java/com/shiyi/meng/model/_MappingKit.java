@@ -39,6 +39,7 @@ public class _MappingKit {
 		arp.addMapping("user", "uId", User.class);
 		arp.addMapping("usercontract", "ucId", Usercontract.class);
 		arp.addMapping("voucher", "vId", Voucher.class);
+		arp.addMapping("reportdevice", "rdId", Reportdevice.class);
 	}
 }
 

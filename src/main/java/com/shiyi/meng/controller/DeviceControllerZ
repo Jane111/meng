@@ -1,3 +1,4 @@
+/*
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
@@ -8,14 +9,10 @@ import com.shiyi.meng.service.DeviceServiceZ;
 import com.shiyi.meng.util.BaseResponse;
 import com.shiyi.meng.util.ResultCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/device")
 public class DeviceControllerZ {
@@ -26,6 +23,7 @@ public class DeviceControllerZ {
 
     //首页显示设备列表 根据用户经纬度 计算距离排序
     @RequestMapping("/getList")
+    @ResponseBody
     public BaseResponse getList(
             @RequestParam("uLat") String uLat, //用户纬度
             @RequestParam("uLng") String uLng, //用户经度
@@ -39,6 +37,7 @@ public class DeviceControllerZ {
     }
     //首页显示设备类型
     @RequestMapping("/getTypeList")
+    @ResponseBody
     public BaseResponse getTypeList(){
         JSONArray array=deviceService.getDeviceType();
         response.setData(array);
@@ -48,6 +47,7 @@ public class DeviceControllerZ {
 
     //根据设备类别筛选二手设备
     @RequestMapping("/selectList")
+    @ResponseBody
     public BaseResponse selectList(
             @RequestParam("dType") BigInteger dType
     ){
@@ -59,15 +59,14 @@ public class DeviceControllerZ {
 
     //买新的设备列表
     @RequestMapping("/getNewList")
+    @ResponseBody
     public  BaseResponse getNewList(){
-        JSONArray array=deviceService.getNewList();
-        response.setData(array);
-        response.setResult(ResultCodeEnum.SUCCESS);
-        return response;
+
     }
 
     //根据设备类别筛选新设备
     @RequestMapping("/selectNewList")
+    @ResponseBody
     public BaseResponse selectNewList(
             @RequestParam("dType") BigInteger dType
     ){
@@ -79,6 +78,7 @@ public class DeviceControllerZ {
 
     //发布二手设备
     @RequestMapping("/putOldDevice")
+    @ResponseBody
     public BaseResponse putOldDevice(
             @RequestParam("dDcpt") String dDcpt,//设备描述
             @RequestParam("dPhoto") String dPhoto,//用 ### 隔开
@@ -86,18 +86,20 @@ public class DeviceControllerZ {
             @RequestParam("dLng") String dLng,//经度
             @RequestParam("dName") String dName,//设备名称
             @RequestParam("dType") BigInteger dType,//设备类别
-            @RequestParam("dDegree") Integer dDegree,//新旧程度
             @RequestParam("dOPrice") Float dOPrice,//原价
             @RequestParam("dSPrice") Float dSPrice,//售价
             @RequestParam("dPhone") String dPhone,//联系电话
             @RequestParam("dPostage") Integer dPostage,//是否包邮
             @RequestParam("dLocation") String dLocation,//地址
             @RequestParam("dOtherConnect") String dOtherConnect,//其他联系方式
-            @RequestParam("dOwner") BigInteger dOwner//发布者
+            @RequestParam("dOwner") BigInteger dOwner,//发布者
+            @RequestParam("dDiscuss") Integer dDiscuss,//是否面议
+            @RequestParam("dClean") Integer dClean//是否清洗干净
     ){
         Device device=new Device();
         device.setDDcpt(dDcpt);
-        device.setDDegree(dDegree);
+        device.setDDiscuss(dDiscuss);
+        device.setDClean(dClean);
         device.setDPhone(dPhone);
         device.setDPhoto(dPhoto);
         device.setDLat(dLat);
@@ -117,8 +119,49 @@ public class DeviceControllerZ {
         return response;
     }
 
+    //发布新设备
+    //发布二手设备
+    @RequestMapping("/putNewDevice")
+    @ResponseBody
+    public BaseResponse putNewDevice(
+            @RequestParam("dDcpt") String dDcpt,//设备描述
+            @RequestParam("dPhoto") String dPhoto,//用 ### 隔开
+            @RequestParam("dLat") String dLat,//纬度
+            @RequestParam("dLng") String dLng,//经度
+            @RequestParam("dName") String dName,//设备名称
+            @RequestParam("dType") BigInteger dType,//设备类别
+            @RequestParam("dSPrice") Float dSPrice,//售价
+            @RequestParam("dPhone") String dPhone,//联系电话
+            @RequestParam("dPostage") Integer dPostage,//是否包邮
+            @RequestParam("dLocation") String dLocation,//地址
+            @RequestParam("dOtherConnect") String dOtherConnect,//其他联系方式
+            @RequestParam("dOwner") BigInteger dOwner,//发布者
+            @RequestParam("dDiscuss") Integer dDiscuss//是否面议
+    ){
+        Device device=new Device();
+        device.setDDcpt(dDcpt);
+        device.setDDiscuss(dDiscuss);
+        device.setDPhone(dPhone);
+        device.setDPhoto(dPhoto);
+        device.setDLat(dLat);
+        device.setDLng(dLng);
+        device.setDName(dName);
+        device.setDType(dType);
+        device.setDOwner(dOwner);
+        device.setDSPrice(dSPrice);
+        device.setDPostage(dPostage);
+        device.setDLocation(dLocation);
+        device.setDOtherConnect(dOtherConnect);
+        device.setDHand(1);//新的
+        device.setDStatus(0);//待审核
+        response.setResult(device.save()?ResultCodeEnum.SUCCESS:ResultCodeEnum.ADD_FAILURE);
+        response.setData(device.getDId());//设备id
+        return response;
+    }
+
     //我发布的设备
     @RequestMapping("/getMyPublished")
+    @ResponseBody
     public BaseResponse getMyPublished(
             @RequestParam("uId") String uId
     ){
@@ -130,6 +173,7 @@ public class DeviceControllerZ {
 
     //下架在架设备
     @RequestMapping("/underCarriage")
+    @ResponseBody
     public BaseResponse underCarriage(
             @RequestParam("dId") String dId
     ){
@@ -145,6 +189,7 @@ public class DeviceControllerZ {
 
     //查看已下架设备
     @RequestMapping("/getMyUnderCarraige")
+    @ResponseBody
     public BaseResponse getMyUnderCarraige(
             @RequestParam("uId") String uId
     ){
@@ -157,6 +202,7 @@ public class DeviceControllerZ {
 
     //编辑设备之显示设备信息
     @RequestMapping("/editShow")
+    @ResponseBody
     public BaseResponse editShow(
             @RequestParam("dId") String dId
     ){
@@ -168,6 +214,7 @@ public class DeviceControllerZ {
 
     //彻底删除
     @RequestMapping("/deleteUnderCarraige")
+    @ResponseBody
     public BaseResponse deleteUnderCarraige(
             @RequestParam("dId") String dId
     ){
@@ -182,6 +229,7 @@ public class DeviceControllerZ {
 
     //我买到的
     @RequestMapping("/getMyBill")
+    @ResponseBody
     public BaseResponse getMyBill(
             @RequestParam("uId") String uId
     ){
@@ -192,6 +240,7 @@ public class DeviceControllerZ {
     }
     //我想要的
     @RequestMapping("/getMyFollow")
+    @ResponseBody
     public BaseResponse getMyFollow(
             @RequestParam("uId") String uId
     ){
@@ -200,4 +249,36 @@ public class DeviceControllerZ {
         response.setResult(ResultCodeEnum.SUCCESS);
         return response;
     }
+
+    //设备详情页
+    @RequestMapping("/getDeviceInfo")
+    @ResponseBody
+    public BaseResponse getDeviceInfo(
+            @RequestParam("dId") String dId
+    ){
+        JSONObject device=deviceService.getDeviceInfo(dId);
+        response.setData(device);
+        response.setResult(ResultCodeEnum.SUCCESS);
+        return response;
+    }
+    //关注设备
+    @RequestMapping("/followDevice")
+    @ResponseBody
+    public BaseResponse followDevice(
+            @RequestParam("dId") BigInteger dId,
+            @RequestParam("uId") BigInteger uId
+    ){
+        if (deviceService.followDevice(dId,uId)){
+            response.setResult(ResultCodeEnum.SUCCESS);
+        }else {
+            response.setResult(ResultCodeEnum.ADD_FAILURE);
+        }
+        return response;
+    }
+    //举报
+
+    //购买
+
+    //
 }
+*/

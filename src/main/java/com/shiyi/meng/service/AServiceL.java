@@ -14,7 +14,30 @@ public class AServiceL {
     public JSONObject packStoreForAdmin(Store store)
     {
         JSONObject packedStore = new JSONObject();
+        /*
+        * 1“店铺出租”租金/2“生意转让”转让费，租金/3“店铺出售”售价/4“仓库出租”租金
+        * */
         packedStore.put("sId",store.getSId());//店铺Id
+        packedStore.put("uId",store.getSUId());//店铺所有人
+        packedStore.put("sPhone",store.getSPhone());//创建店铺时填写的电话号码
+        packedStore.put("sConName",store.getSConName());//创建店铺时填写的姓名
+        packedStore.put("sName",store.getSName());//店铺名称
+        packedStore.put("sArea",store.getSAera());//店铺面积
+        packedStore.put("sColumn",store.getSColumn());//店铺栏目
+        packedStore.put("sLoc",store.getSLoc());//位置
+        packedStore.put("sStatus",store.getSStatus());//店铺状态
+
+        Integer column = store.getSColumn();//店铺所在栏目
+        if(column==1||column==4)
+        {
+            packedStore.put("sMoney",store.getSRentMoney());//每月租金
+        }else if(column==2)
+        {
+            packedStore.put("sMoney",store.getSTranMoney());//转让费/售价
+        }else if(column==3)
+        {
+            packedStore.put("sMoney",store.getSDeposit());//售价
+        }
         return packedStore;
     }
 
@@ -50,19 +73,22 @@ public class AServiceL {
     }
 
     //定制化找店信息列表
-    public JSONArray findStoreInfo()
+    public JSONArray findStoreInfo(Integer fdStatus)
     {
         JSONArray fStoreList = new JSONArray();
-        List<Findstore> findstoreList = Findstore.dao.find("select * from findstore");
+        List<Findstore> findstoreList = Findstore.dao.find("select * from findstore " +
+                "where fdStatus=?",fdStatus);
         for(Findstore findstore:findstoreList)
         {
             JSONObject findStoreDetial = new JSONObject();
             findStoreDetial.put("fdCommand",findstore.getFdCommand());
+            findStoreDetial.put("fdId",findstore.getFdId());
             findStoreDetial.put("fdPhone",findstore.getFdPhone());
             findStoreDetial.put("fdName",findstore.getFdName());
             User user = User.dao.findById(findstore.getFdUser());
             findStoreDetial.put("uWeiXinIcon",user.getUWeiXinIcon());
             findStoreDetial.put("uWeiXinName",user.getUWeiXinName());
+            fStoreList.add(findStoreDetial);
         }
         return fStoreList;
     }
@@ -135,7 +161,7 @@ public class AServiceL {
     {
         JSONArray showReturnList = new JSONArray();
         List<Transfermoney> transfermoneyList = Transfermoney.dao.find("select * from transfermoney " +
-                "where tmFrom=0 AND tmStatus=1");//tmTo为0，表示转账来源为平台,状态为同意退款的
+                "where tmFrom=0");//tmFrom为0，表示转账来源为平台
         for(Transfermoney transfermoney:transfermoneyList)
         {
             JSONObject showReturn = new JSONObject();

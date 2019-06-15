@@ -1,5 +1,8 @@
+server:
+  port: 8004
+
 jfinal:
   debug: true
-  jdbcUrl: jdbc:mysql://120.79.79.141:3306/catering?characterEncoding=utf8&serverTimezone=UTC
+  jdbcUrl: jdbc:mysql://47.110.248.49:3306/catering?characterEncoding=utf8&serverTimezone=UTC&initialSize=90&maxActive=130&wait_timeout=288000
   dbUser: root
   dbPwd: 123456

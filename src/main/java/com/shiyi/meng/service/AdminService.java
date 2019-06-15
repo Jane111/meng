@@ -15,8 +15,6 @@ import java.util.List;
 @Service
 public class AdminService {
 
-
-
     //获取待审核二手设备
     public JSONArray getSecondHandList() {
         String sql="select * from devicebusiness where dbType=2 and dbStatus="+ Constant.dbStatus_Wait;
@@ -126,10 +124,10 @@ public class AdminService {
         JSONArray array=new JSONArray();
         for (Device device:deviceList){
             JSONObject object=null;
-            if (dHand.equals("1")){//新设备
+            if (dHand==1){//新设备
                 object=packNewDevice(device);
             }
-            if (dHand.equals("2")){//二手
+            if (dHand==2){//二手
                 object=packSecondDevice(device);
             }
             array.add(object);
@@ -176,6 +174,7 @@ public class AdminService {
     //新旧设备详细信息
     public JSONObject getDeviceInfo(BigInteger dId) {
         Device device=Device.dao.findById(dId);
+        if (device==null) return null;
         JSONObject object=packEntireDevice(device);
         return object;
     }
@@ -241,16 +240,16 @@ public class AdminService {
     }
 
     //已经审核过的新旧设备
-    public JSONArray checkedDeviceList(Integer dHand,int pageStart,int pageIndex) {
+    public JSONArray checkedDeviceList(Integer dHand) {
         List<Device> deviceList=Device.dao.find("select * from device " +
-                "where dHand=? and (dStatus=? or dStatus=?)  limit "+(pageStart-1)*pageIndex+","+pageIndex+" ",dHand,Constant.dStatus_ON,Constant.dStatus_Faliure);
+                "where dHand=? and (dStatus=? or dStatus=?)  ",dHand,Constant.dStatus_ON,Constant.dStatus_Faliure);
         JSONArray array=new JSONArray();
         for (Device device:deviceList){
             JSONObject deviceObj=null;
-            if (dHand.equals("2")){
+            if (dHand==2){
                 deviceObj=packSecondDevice(device);
             }
-            if (dHand.equals("1")){
+            if (dHand==1){
                 deviceObj=packNewDevice(device);
             }
             array.add(deviceObj);
@@ -259,9 +258,9 @@ public class AdminService {
     }
 
     //待审核设备商、维修商列表
-    public JSONArray waitDBList(Integer dbType,int pageStart,int pageIndex){
+    public JSONArray waitDBList(Integer dbType){
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.
-                find("select * from devicebusiness where dbType="+dbType+" and dbStatus= "+Constant.dbStatus_Wait+" limit "+(pageStart-1)*pageIndex+","+pageIndex+" ");
+                find("select * from devicebusiness where dbType="+dbType+" and dbStatus= "+Constant.dbStatus_Wait+" ");
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){
             JSONObject db=packDBList(devicebusiness);
@@ -273,6 +272,7 @@ public class AdminService {
     //等待审核的设备商的详细信息
     public JSONObject waitDBInfo(int dbType,BigInteger dbId) {
         Devicebusiness devicebusiness=Devicebusiness.dao.findById(dbId);
+        if (devicebusiness==null) return null;
         JSONObject object=null;
         if (dbType==2){
             object=packSecondDB(devicebusiness);
@@ -284,20 +284,20 @@ public class AdminService {
     }
 
     //是否通过设备商的申请
-    public boolean passOrNotDB(BigInteger dbId, int operate) {
-        Devicebusiness devicebusiness=Devicebusiness.dao.findById(dbId);
+    public boolean passOrNotD(BigInteger dId, int operate) {
+        Device device=Device.dao.findById(dId);
         if (operate==1){
-            devicebusiness.setDbStatus(Constant.dbStatus_NotPass);
+            device.setDStatus(Constant.dStatus_Faliure);
         }
         else {
-            devicebusiness.setDbStatus(Constant.dbStatus_Pass);
+            device.setDStatus(Constant.dStatus_ON);
         }
-        return devicebusiness.update();
+        return device.update();
     }
     //已经审核通过的设备商
-    public JSONArray passedDBList(int dbType, int pageStart, int pageIndex) {
+    public JSONArray passedDBList(int dbType) {
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.
-                find("select * from devicebusiness where dbType="+dbType+" and (dbStatus= "+Constant.dbStatus_NotPass+" or dbStatus= "+Constant.dbStatus_Pass+" ) limit "+(pageStart-1)*pageIndex+","+pageIndex+" ");
+                find("select * from devicebusiness where dbType="+dbType+" and (dbStatus= "+Constant.dbStatus_NotPass+" or dbStatus= "+Constant.dbStatus_Pass+" ) ");
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){
             JSONObject db=packDBList(devicebusiness);
@@ -306,9 +306,8 @@ public class AdminService {
         return array;
     }
     //异常设备
-    public JSONArray waitCheckDeviceList(int dHand, int pageStart, int pageIndex) {
-        String sql="select * from reportdevice where rdStatus=? and rdDevice in (select dId from device where dHand= ? ) " +
-                "limit "+(pageStart-1)*pageIndex+" , "+pageIndex+" ";
+    public JSONArray waitCheckDeviceList(int dHand) {
+        String sql="select * from reportdevice where rdStatus=? and rdDevice in (select dId from device where dHand= ? )  ";
         List<Reportdevice> reportdevices=Reportdevice.dao.find(sql,Constant.reportD_Wait,dHand);
         JSONArray array=new JSONArray();
         for (Reportdevice reportdevice:reportdevices){
@@ -341,9 +340,8 @@ public class AdminService {
         return user.getUWeiXinName();
     }
     //已经审核过的设备
-    public JSONArray checkedReportDeviceList(int dHand, int pageStart, int pageIndex) {
-        String sql="select * from reportdevice where (rdStatus=? or rdStatus=?) and rdDevice in (select dId from device where dHand= ? ) " +
-                "limit "+(pageStart-1)*pageIndex+" , "+pageIndex+" ";
+    public JSONArray checkedReportDeviceList(int dHand) {
+        String sql="select * from reportdevice where (rdStatus=? or rdStatus=?) and rdDevice in (select dId from device where dHand= ? ) ";
         List<Reportdevice> reportdevices=Reportdevice.dao.find(sql,Constant.reportD_Pass,Constant.reportD_NotPass,dHand);
         JSONArray array=new JSONArray();
         for (Reportdevice reportdevice:reportdevices){
@@ -356,6 +354,7 @@ public class AdminService {
     //待审核设备详情
     public JSONObject waitCheckDeviceInfo(BigInteger rdId) {
         Reportdevice reportdevice=Reportdevice.dao.findById(rdId);
+        if (reportdevice==null) return null;
         JSONObject object=packEntireRd(reportdevice);
         return object;
     }
@@ -387,8 +386,8 @@ public class AdminService {
         return reportdevice.update();
     }
 
-    public JSONArray allSecondDB(int dbType, int pageStart, int pageIndex) {
-        String sql="select * from devicebusiness where dbType=? limit "+(pageStart-1)*pageIndex+","+pageIndex+" ";
+    public JSONArray allSecondDB(int dbType) {
+        String sql="select * from devicebusiness where dbType=?  ";
         List<Devicebusiness> devicebusinessList=Devicebusiness.dao.find(sql,dbType);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinessList){
@@ -405,22 +404,19 @@ public class AdminService {
         return contracttemplate.save();
     }
 
-    public JSONArray getContractModelList(int pageStart, int pageIndex) {
-        String sql="select * from contractTemplete limit "+(pageStart-1)*pageIndex+" , "+pageIndex +" Order By ctModifyTime Desc ";
+    public JSONArray getContractModelList() {
+        String sql="select * from contractTemplete  Order By ctModifyTime Desc ";
         JSONArray array=new JSONArray();
         List<Contracttemplate> list=Contracttemplate.dao.find(sql);
-        int i=(pageStart-1)*pageIndex+1;
         for (Contracttemplate contracttemplate:list){
-            JSONObject object=packContractTemplete(contracttemplate,i);
+            JSONObject object=packContractTemplete(contracttemplate);
             array.add(object);
-            i++;
         }
         return array;
     }
     //打包合同模板列表
-    private JSONObject packContractTemplete(Contracttemplate contracttemplate,int i) {
+    private JSONObject packContractTemplete(Contracttemplate contracttemplate) {
         JSONObject object=new JSONObject();
-        object.put("number",i);
         object.put("ctId",contracttemplate.getCtId());
         object.put("ctContent",contracttemplate.getCtContent());
         return object;
@@ -432,8 +428,8 @@ public class AdminService {
     }
 
     //获取用户上传合同列表
-    public JSONArray getUserContratcList(int pageIndex, int pageStart) {
-        String sql="select * from usercontract where ucStatus=? limit "+(pageStart-1)*pageIndex+" , "+pageIndex +" Order By ctModifyTime Desc ";
+    public JSONArray getUserContratcList() {
+        String sql="select * from usercontract where ucStatus=?  Order By ctModifyTime Desc ";
         List<Usercontract> list=Usercontract.dao.find(sql, Constant.userContrac_Wait);
         JSONArray array=new JSONArray();
         for (Usercontract uc:list){

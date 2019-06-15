@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class DeviceServiceZ {
     public JSONArray getDeviceLists(String uLat,String uLng,String start) {
         JSONArray showDeivceList = new JSONArray();
         List<Device> deviceList = Device.dao.find("select * from device where  dStatus=2 and dHand!=1 " +
-                "order by dModifyTime desc and ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10");
+                " order by dModifyTime desc limit "+start+",10");
         //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
         for(Device device:deviceList)
         {
@@ -94,7 +95,7 @@ public class DeviceServiceZ {
     //获取新设备列表
     public JSONArray getNewList(String uLat,String uLng,String start) {
         String sql="select * from device where dHand=1 and dStatus=2 " +
-                "order by dModifyTime desc and ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                "order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Device> deviceList=Device.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Device device:deviceList){
@@ -461,7 +462,7 @@ public class DeviceServiceZ {
     //获取附近维修商de
     public JSONArray getRepairList(String uLat, String uLng, String start) {
         String sql="select * from devicebusiness where dbType=3 and dbStatus ="+ Constant.dbStatus_Pass +
-                "  order by ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                "  order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){
@@ -473,7 +474,7 @@ public class DeviceServiceZ {
     //获取附近二手商de
     public JSONArray getSeconddbList(String uLat, String uLng, String start) {
         String sql="select * from devicebusiness where dbType=2 and dbStatus ="+ Constant.dbStatus_Pass +
-                "  order by ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                "  order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){
@@ -485,7 +486,7 @@ public class DeviceServiceZ {
     //获取附近新设备商de
     public JSONArray getNewdbList(String uLat, String uLng, String start) {
         String sql="select * from devicebusiness where dbType=1 and dbStatus ="+ Constant.dbStatus_Pass +
-                " order by ACOS(SIN(('"+uLat+"' * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(('"+uLat+"' * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(('"+uLng+"' * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                " order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){
@@ -534,14 +535,23 @@ public class DeviceServiceZ {
 
     public boolean isInValidTime(BigInteger dId){
         Device device=Device.dao.findById(dId);
-        Date now = new Date();
-        Date beforFive=new Date(now.getTime() - 300000);
-        Date modifyTime=device.getDModifyTime();
-        System.out.println("befornow 5"+beforFive+"  modify"+modifyTime);
+        String sql="select dModifyTime from device where dId="+dId;
+        Date modifyTime=Db.queryDate(sql);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        System.out.println(sdf.format(new Date()));// new Date()为获取当前系统时间
+        Date nowDate = new Date();
+        Long before=nowDate.getTime() - 300000;
+        Long modify=modifyTime.getTime();
+        //Date beforFive=sdf.parse(sdf.format(before));
+        System.out.println("now "+nowDate+" befornow 5 "+before+"  modify"+modifyTime+" getDFlushTime "+device.getDFlushTime());
         if (device.getDFlushTime().toString().equals("0")){
             return true;
         }
-        if (modifyTime.before(beforFive)){
+            /*if (modifyTime.before(beforFive)){
+                return true;
+            }*/
+        System.out.println("modify"+modify+"  befor"+before);
+        if (before>=modify){//以前修改的在5分钟之前
             return true;
         }
         return false;

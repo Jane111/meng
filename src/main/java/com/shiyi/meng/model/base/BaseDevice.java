@@ -140,11 +140,11 @@ public abstract class BaseDevice<M extends BaseDevice<M>> extends Model<M> imple
 		return get("dCreateTime");
 	}
 
-	public void setDModifyTime(java.util.Date dModifyTime) {
+	public void setDModifyTime(java.sql.Timestamp dModifyTime) {
 		set("dModifyTime", dModifyTime);
 	}
 
-	public java.util.Date getDModifyTime() {
+	public java.sql.Timestamp getDModifyTime() {
 		return get("dModifyTime");
 	}
 

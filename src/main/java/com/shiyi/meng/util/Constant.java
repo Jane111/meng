@@ -51,4 +51,7 @@ public class Constant {
     public static final int userContrac_Wait=0;
     public static final int userContrac_Not=1;
     public static final int userContrac_Pass=2;
+
+    public static final int smsType_Device=1;
+	public static final int smsType_Store=2;
 }

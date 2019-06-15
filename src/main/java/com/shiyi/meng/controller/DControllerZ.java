@@ -25,6 +25,7 @@ import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/device")
+@CrossOrigin
 public class DControllerZ {
 
 
@@ -826,6 +827,8 @@ public class DControllerZ {
     public BaseResponse flushTopDevice(
             @RequestParam("dId") BigInteger dId
     ){
+        BaseResponse response=new BaseResponse();
+        System.out.println("flushTop"+dId);
         if (deviceService.isInValidTime(dId)){
             if (deviceService.flushTopDevice(dId)){
                 response.setResult(ResultCodeEnum.SUCCESS);

@@ -1,6 +1,8 @@
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Db;
 import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.util.BaseResponse;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.sasl.SaslServer;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -95,7 +98,7 @@ public class AControllerL {
         Store store = new Store();
         store.setSId(sId);
         store.setSStatus(sStatus);
-        boolean flag = store.save();
+        boolean flag = store.update();
         if(flag)
         {
             br.setResult(ResultCodeEnum.SUCCESS);
@@ -120,6 +123,24 @@ public class AControllerL {
         }else
         {
             br.setData(abStoreList);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }
+        return br;
+    }
+    //显示异常店铺详情
+    @RequestMapping("/showAbStore")
+    public BaseResponse showAbStore(
+            @RequestParam("asId") BigInteger asId//异常店铺编号
+    )
+    {
+        JSONObject abnormalstore = aServiceL.selectAbStore(asId);
+        if(abnormalstore==null)
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }else
+        {
+            br.setData(abnormalstore);
             br.setResult(ResultCodeEnum.SUCCESS);
         }
         return br;
@@ -340,11 +361,11 @@ public class AControllerL {
         return br;
     }
 
-    //显示提交的退款申请
-    @RequestMapping("/showTuiApply")
-    public BaseResponse showTuiApply()
+    //显示提交的退款申请列表
+    @RequestMapping("/showTuiApplyList")
+    public BaseResponse showTuiApplyList()
     {
-        JSONArray tuiApply = aServiceL.showTuiApply();
+        JSONArray tuiApply = aServiceL.showTuiApplyList();
         if(!tuiApply.isEmpty())
         {
             br.setData(tuiApply);
@@ -356,6 +377,26 @@ public class AControllerL {
         }
         return br;
     }
+
+    //显示提交的退款信息详情
+    @RequestMapping("/showTuiApplyDetail")
+    public BaseResponse showTuiApplyDetail(
+            @RequestParam("sdId") BigInteger sdId
+    )
+    {
+        Stopdeal stopdeal = Stopdeal.dao.findById(sdId);
+        if(stopdeal!=null)
+        {
+            br.setData(stopdeal);
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setData(null);
+            br.setResult(ResultCodeEnum.FIND_ERROR);
+        }
+        return br;
+    }
+
     //同意退款申请
     @RequestMapping("/agreeTuiApply")
     public BaseResponse agreeTuiApply(
@@ -388,6 +429,41 @@ public class AControllerL {
         signstore.setSsStatus(5);//拒绝退款申请
         boolean flag = signstore.update();
         if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //待审核发布店铺|待审核举报店铺
+    @RequestMapping("/getNumOfStore")
+    public BaseResponse getNumOfStore()
+    {
+        //待审核 sStatus为0
+        Integer unCheckReleaseStore = Db.queryInt("select count(*) from store " +
+                "where sStatus=0");
+        //待审核举报店铺
+        Integer unCheckAbnormalStore = Db.queryInt("select count(*) from store " +
+                "where asStatus=0");
+        //待审核设备
+        Integer unCheckDevice = Db.queryInt("select count(*) from device " +
+                "where dStatus=0");
+        //待审核设备商
+        Integer unCheckDeviceBusiness = Db.queryInt("select count(*) from devicebusiness " +
+                "where dbStatus=0");
+        //待审核举报设备
+        Integer unCheckReportDevice = Db.queryInt("select count(*) from reportdevice " +
+                "where rdStatus=0");
+        JSONObject returnData = new JSONObject();
+        returnData.put("unCheckReleaseStore",unCheckReleaseStore);
+        returnData.put("unCheckAbnormalStore",unCheckAbnormalStore);
+        returnData.put("unCheckDevice",unCheckDevice);
+        returnData.put("unCheckDeviceBusiness",unCheckDeviceBusiness);
+        returnData.put("unCheckReportDevice",unCheckReportDevice);
+        if(returnData!=null)
         {
             br.setResult(ResultCodeEnum.SUCCESS);
         }else

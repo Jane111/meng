@@ -398,6 +398,7 @@ public class UControllerL {
         abnormalstore.setAsReason(asReason);
         abnormalstore.setAsPhoto(asPhoto);
         abnormalstore.setAsType(asType);
+        abnormalstore.setAsStatus(0);//状态为未审核
         boolean flag = abnormalstore.save();
         if(flag)
         {

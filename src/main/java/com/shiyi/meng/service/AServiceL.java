@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.shiyi.meng.model.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class AServiceL {
         packedStore.put("sName",store.getSName());//店铺名称
         packedStore.put("sArea",store.getSAera());//店铺面积
         packedStore.put("sColumn",store.getSColumn());//店铺栏目
-        packedStore.put("sLoc",store.getSLoc());//位置
+        packedStore.put("sLoc",store.getSLoc());//定位得到位置
+
         packedStore.put("sStatus",store.getSStatus());//店铺状态
 
         Integer column = store.getSColumn();//店铺所在栏目
@@ -65,11 +67,29 @@ public class AServiceL {
             JSONObject abStore = new JSONObject();
             abStore.put("sId",store.getSId());//店铺Id
             abStore.put("sName",store.getSName()); //被举报的店铺名称
-            abStore.put("sType",store.getSType());//类型
             abStore.put("sLoc",store.getSLoc());//位置
+            abStore.put("sColumn",store.getSColumn());//被举报的店铺类型
+            abStore.put("asId",abnormalstore.getAsId());//异常店铺Id
+            abStore.put("asContact",abnormalstore.getAsContact());//举报联系人姓名
+            abStore.put("asPhone",abnormalstore.getAsPhone());//举报者电话号码
+            abStore.put("asType",abnormalstore.getAsType());//举报类型
             abStoreList.add(abStore);
         }
         return abStoreList;
+    }
+    public JSONObject selectAbStore(BigInteger asId)
+    {
+        Abnormalstore abnormalstore = Abnormalstore.dao.findById(asId);
+        JSONObject abStore = new JSONObject();
+        abStore.put("asId",abnormalstore.getAsId());//异常店铺Id
+        abStore.put("asContact",abnormalstore.getAsContact());//举报联系人姓名
+        abStore.put("asPhone",abnormalstore.getAsPhone());//举报者电话号码
+        abStore.put("asType",abnormalstore.getAsType());//举报类型
+        abStore.put("asReason",abnormalstore.getAsReason());//举报原因
+        String photo = abnormalstore.getAsPhoto();
+        String[] photoList = photo.split("###");
+        abStore.put("asPhoto",photoList);//图片
+        return abStore;
     }
 
     //定制化找店信息列表
@@ -112,7 +132,7 @@ public class AServiceL {
         }
         return returnApplyList;
     }
-    public JSONArray showTuiApply()
+    public JSONArray showTuiApplyList()
     {
         JSONArray returnApplyList = new JSONArray();
         List<Signstore> returnmoneyList = Signstore.dao.find("select * from signstore " +
@@ -124,6 +144,8 @@ public class AServiceL {
             returnApply.put("ssId",signstore.getSsId());
             //店铺名称
             returnApply.put("sName",Store.dao.findById(signstore.getSsStore()).getSName());
+            //退款信息Id
+            returnApply.put("sdId",signstore.getSsStopDeal());
 
             //查到对应的退款申请
             Stopdeal stopdeal = Stopdeal.dao.findById(signstore.getSsStopDeal());
@@ -133,10 +155,13 @@ public class AServiceL {
             returnApply.put("sdApplyNum",stopdeal.getSdApplyNum());
             returnApply.put("sdApplyPhone",stopdeal.getSdApplyPhone());
             returnApply.put("sdApplyPhone",stopdeal.getSdApplyPhone());
+
             returnApplyList.add(returnApply);
         }
         return returnApplyList;
     }
+
+
     //查看用户上交押金信息
     public JSONArray showHandInDeposit()
     {

@@ -2,12 +2,21 @@ package com.shiyi.meng.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.core.Const;
 import com.shiyi.meng.model.*;
+import com.shiyi.meng.util.Constant;
+import com.shiyi.meng.util.PaymentApi;
+import com.shiyi.meng.util.PaymentKit;
+import com.shiyi.meng.util.WXPayUtil;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UServiceL {
@@ -28,6 +37,8 @@ public class UServiceL {
         packedStore.put("sArea",store.getSAera());//店铺面积
         packedStore.put("sColumn",store.getSColumn());//店铺栏目
         packedStore.put("sLoc",store.getSLoc());//位置
+        packedStore.put("sStatus",store.getSStatus());//店铺状态
+        packedStore.put("sRefuseReason",store.getSRefuseReason());//拒绝原因
         Integer column = store.getSColumn();//店铺所在栏目
         if(column==1||column==4)
         {
@@ -125,15 +136,32 @@ public class UServiceL {
         return followStoreList;
     }
 
-    //查看用户签约的店铺列表
-    public JSONArray getSignStoreList(BigInteger uId)
+    //查看用户签约的店铺列表-上交押金
+    public JSONArray getSignStoreListByMoney(BigInteger uId)
     {
         JSONArray signStoreList =  new JSONArray();
         List<Signstore> signstoreList = Signstore.dao.find("select * from signstore " +
-                "where ssUser=?",uId);
+                "where ssUser=? AND ssIsMoney=1",uId);
         for(Signstore signstore:signstoreList)
         {
             Store store = Store.dao.findById(signstore.getSsStore());//得到用户关注的店铺信息
+            packStore(store).put("ssId",signstore.getSsId());//得到签约的id，以便之后状态的改变
+            packStore(store).put("ssStatus",signstore.getSsStatus());//签约的状态
+            signStoreList.add(packStore(store));
+        }
+        return signStoreList;
+    }
+
+    //查看用户签约的店铺列表-上传合同
+    public JSONArray getSignStoreListByContract(BigInteger uId)
+    {
+        JSONArray signStoreList =  new JSONArray();
+        List<Signstore> signstoreList = Signstore.dao.find("select * from signstore " +
+                "where ssUser=? AND ssIsContract=1",uId);
+        for(Signstore signstore:signstoreList)
+        {
+            Store store = Store.dao.findById(signstore.getSsStore());//得到用户关注的店铺信息
+            packStore(store).put("signStoreId",signstore.getSsId());//得到签约的id，以便之后状态的改变
             signStoreList.add(packStore(store));
         }
         return signStoreList;
@@ -192,6 +220,160 @@ public class UServiceL {
         }
         return finalStoreList;
     }
+    //得到平台所有提示信息
+    public JSONArray findAllHint()
+    {
+        JSONArray allHint = new JSONArray();
+        List<Hint> hintList = Hint.dao.find("select * from hint");
+        for(Hint hint:hintList)
+        {
+            JSONObject showHint = new JSONObject();
+            showHint.put("hLoc",hint.getHLoc());
+            showHint.put("hContent",hint.getHContent());
+            allHint.add(showHint);
+        }
+        return allHint;
+    }
+    //显示某个用户交易记录
+    public JSONArray findAllBill(BigInteger uId)
+    {
+        JSONArray allBill = new JSONArray();
+        List<Transfermoney> transfermoneyList = Transfermoney.dao.find("select * from transfermoney " +
+                "where tmFrom=?",uId);
+        transfermoneyList.addAll(Transfermoney.dao.find("select * from transfermoney where tmTo=?",uId));
+        for(Transfermoney tm:transfermoneyList)
+        {
+            JSONObject showBill = new JSONObject();
+            if(tm.getTmFrom().equals(new BigInteger("0")))
+            {
+                showBill.put("tmFrom","餐饮小程序平台");
+            }
+            if(tm.getTmFrom().equals(new BigInteger("0")))
+            {
+                showBill.put("tmTo","餐饮小程序平台");
+            }
+            showBill.put("tmStore",Store.dao.findById(tm.getTmStore()).getSName());
+            showBill.put("tmMoney",tm.getTmMoney());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+            showBill.put("tmCreateTime",sdf.format(tm.getTmCreateTime()));
+            allBill.add(showBill);
+        }
+        return allBill;
+    }
+
+    /**
+     * 功能描述:<调用统一下单的接口>
+     **/
+    public Map<String, String> unifiedOrder(String outTradeNo, BigDecimal money, String openid) throws Exception {
+        Map<String, String> reqParams = new HashMap<>();
+        //微信分配的小程序ID
+        reqParams.put("appid", Constant.APPID);
+        //微信支付分配的商户号
+        reqParams.put("mch_id", Constant.MCH_ID);
+        //随机字符串
+        reqParams.put("nonce_str", System.currentTimeMillis() / 1000 + "");
+        //签名类型
+        reqParams.put("sign_type", "MD5");
+        //充值订单 商品描述
+        reqParams.put("body", "萌系餐饮人-押金支付订单-微信小程序");
+        //商户订单号
+        reqParams.put("out_trade_no", outTradeNo);
+        //订单总金额，单位为分
+        reqParams.put("total_fee", money.multiply(BigDecimal.valueOf(100)).intValue() + "");
+        //终端IP
+        reqParams.put("spbill_create_ip", "127.0.0.1");
+        //通知地址
+        reqParams.put("notify_url", Constant.NOTIFY_URL);
+        //交易类型
+        reqParams.put("trade_type", "JSAPI");
+        //用户标识
+        reqParams.put("openid", openid);
+        //签名
+        String sign = WXPayUtil.generateSignature(reqParams, Constant.KEY);
+        reqParams.put("sign", sign);
+        /*
+        调用支付定义下单API,返回预付单信息 prepay_id
+         */
+        String xmlResult = PaymentApi.pushOrder(reqParams);
+        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
+        System.out.println(xmlResult);
+        //预付单信息
+        String prepay_id = result.get("prepay_id");
+
+        /*
+        小程序调起支付数据签名
+         */
+        Map<String, String> packageParams = new HashMap<String, String>();
+        packageParams.put("appId", Constant.APPID);
+        packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+        packageParams.put("nonceStr", System.currentTimeMillis() + "");
+        packageParams.put("package", "prepay_id=" + prepay_id);
+        packageParams.put("signType", "MD5");
+        String packageSign = WXPayUtil.generateSignature(packageParams, Constant.KEY);
+        packageParams.put("paySign", packageSign);
+        return packageParams;
+
+
+    }
+    /**
+     * 功能描述: <调用企业支付到零钱的接口>
+     **/
+    public Map<String, String> mToPOrder(String out_trade_no, BigDecimal money, String openid) throws Exception {
+        Map<String, String> reqParams = new HashMap<>();
+        //微信分配的小程序ID
+        reqParams.put("appid", Constant.APPID);
+        //微信支付分配的商户号
+        reqParams.put("mch_id", Constant.MCH_ID);
+        //随机字符串
+        reqParams.put("nonce_str", System.currentTimeMillis() / 1000 + "");
+        //签名类型
+        reqParams.put("sign_type", "MD5");
+        //充值订单 商品描述
+        reqParams.put("body", "萌系餐饮人-押金支付订单-微信小程序");
+        //商户订单号，需保持唯一性(只能是字母或者数字，不能包含有其他字符)
+        reqParams.put("out_trade_no", out_trade_no);
+        //用户openid，oxTWIuGaIt6gTKsQRLau2M0yL16E，商户appid下，某用户的openid
+        reqParams.put("openid", openid);
+        //校验用户姓名选项 	NO_CHECK：不校验真实姓名/FORCE_CHECK：强校验真实姓名
+        reqParams.put("check_name", "NO_CHECK");
+
+//        收款用户姓名 	re_user_name 	否 	王小王 	String(64) 	收款用户真实姓名。
+//        如果check_name设置为FORCE_CHECK，则必填用户真实姓名
+
+        //订单总金额，单位为分
+        reqParams.put("amount", money.multiply(BigDecimal.valueOf(100)).intValue() + "");//都是整数，以分为单位
+        //终端IP
+        reqParams.put("spbill_create_ip", "127.0.0.1");
+        //企业付款备注,企业付款备注，必填。
+        reqParams.put("desc", "萌系餐饮小程序交易成功押金返还");
+        //签名
+        String sign = WXPayUtil.generateSignature(reqParams, Constant.KEY);
+        reqParams.put("sign", sign);
+        /*
+        调用支付定义下单API,返回预付单信息 prepay_id
+         */
+        String xmlResult = PaymentApi.pushOrder(reqParams);
+        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
+        System.out.println(xmlResult);
+        //todo 将付款信息存入数据库
+        //预付单信息
+        String prepay_id = result.get("prepay_id");
+
+        /*
+        小程序调起支付数据签名
+         */
+        Map<String, String> packageParams = new HashMap<String, String>();
+        packageParams.put("appId", Constant.APPID);
+        packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+        packageParams.put("nonceStr", System.currentTimeMillis() + "");
+        packageParams.put("package", "prepay_id=" + prepay_id);
+        packageParams.put("signType", "MD5");
+        String packageSign = WXPayUtil.generateSignature(packageParams, Constant.KEY);
+        packageParams.put("paySign", packageSign);
+        return packageParams;
+    }
+
+
 
 
 

@@ -565,4 +565,29 @@ public class DeviceServiceZ {
         device.setDFlushTime(newTime);
         return device.update();
     }
+
+    //核对发布设备的code
+    public boolean checkSMSDeviceCode(String input,String phone){
+        String sql="slelect * from smscode where smsPhone=? and smsCode=? and smsType=?";
+        Smscode smscode=Smscode.dao.findFirst(sql,phone,input,Constant.smsType_Device);
+        if (smscode==null){
+            return false;
+        }
+        else
+        {smscode.delete();}
+        return true;
+    }
+
+    //核对入驻店铺的验证码
+    public boolean checkSMSStoreCode(String input,String phone){
+        String sql="slelect * from smscode where smsPhone=? and smsCode=? and smsType=?";
+        Smscode smscode=Smscode.dao.findFirst(sql,phone,input,Constant.smsType_Store);
+        if (smscode==null){
+            return false;
+        }
+        else
+        {smscode.delete();}
+        return true;
+    }
+
 }

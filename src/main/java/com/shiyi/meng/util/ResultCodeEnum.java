@@ -25,7 +25,8 @@ public enum ResultCodeEnum
 	FIND_FAILURE("20004","查询失败"),
 	UPDATE_FAILURE("20005","修改失败"),
 	DO_NOT_HAVE_RIGHT("20006","没有权限申请"),
-    HAS_REGISTER("20008","已经申请入驻过");
+    HAS_REGISTER("20008","已经申请入驻过"),
+	WRONG_CODE("20009","验证码错误");
 
     private String code;
     private String desc;

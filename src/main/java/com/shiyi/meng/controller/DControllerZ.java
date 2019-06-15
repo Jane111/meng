@@ -139,8 +139,15 @@ public class DControllerZ {
             @RequestParam("dOtherType") int dOtherType,//奇台联系方式类型 1-微信 ，2-qq,3-邮箱
             @RequestParam("dOwner") BigInteger dOwner,//发布者
             @RequestParam("dDiscuss") Integer dDiscuss,//是否面议
-            @RequestParam("dClean") Integer dClean//是否清洗干净
+            @RequestParam("dClean") Integer dClean,//是否清洗干净
+            @RequestParam("code")String code
     ){
+        BaseResponse response=new BaseResponse();
+        if (deviceService.checkSMSDeviceCode(dPhone,code)){
+            response.setResult(ResultCodeEnum.WRONG_CODE);//20009
+            return response;
+        }
+
         Device device=new Device();
         device.setDDcpt(dDcpt);
         device.setDDiscuss(dDiscuss);

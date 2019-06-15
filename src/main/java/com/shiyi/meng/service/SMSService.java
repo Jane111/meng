@@ -1,7 +1,9 @@
 package com.shiyi.meng.service;
 
+import com.jfinal.plugin.activerecord.Db;
 import com.shiyi.meng.model.Smscode;
 import com.shiyi.meng.util.Constant;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -11,14 +13,14 @@ import java.util.List;
 public class SMSService {
     //验证验证码是否已经存在
     public boolean deviceHasCode(Integer code) {
-        String sql = "select * from smscode where smsCode=? and smsCreateTime > DATEADD(MINUTE,-10,GETDATE()) and smsType=?";
+        String sql = "select * from smscode where smsCode=? and smsType=?";//and smsCreateTime > DATEADD(MINUTE,-10,GETDATE())
         List<Smscode> smscode=Smscode.dao.find(sql,code, Constant.smsType_Device);
         return !smscode.isEmpty();
     }
 
     //是否十分钟内已经发过
     public boolean deviceCheckPhone(String phone) {
-        String sql = "select * from smscode where smsPhone=? and smsCreateTime > DATEADD(MINUTE,-10,GETDATE()) and smsType=?";
+        String sql = "select * from smscode where smsPhone=?  and smsType=?";//and smsCreateTime > DATEADD(MINUTE,-10,GETDATE())
         List<Smscode> smscode=Smscode.dao.find(sql,phone,Constant.smsType_Device);
         return smscode.isEmpty();
     }
@@ -33,14 +35,14 @@ public class SMSService {
 
     //验证验证码是否已经存在
     public boolean storeHasCode(Integer code) {
-        String sql = "select * from smscode where smsCode=? and smsCreateTime > DATEADD(MINUTE,-10,GETDATE()) and smsType=?";
+        String sql = "select * from smscode where smsCode=?  and smsType=?";//and smsCreateTime > DATEADD(MINUTE,-10,GETDATE())
         List<Smscode> smscode=Smscode.dao.find(sql,code, Constant.smsType_Device);
         return !smscode.isEmpty();
     }
 
     //是否十分钟内已经发过
     public boolean storeCheckPhone(String phone) {
-        String sql = "select * from smscode where smsPhone=? and smsCreateTime > DATEADD(MINUTE,-10,GETDATE()) and smsType=?";
+        String sql = "select * from smscode where smsPhone=? and smsType=?";//and smsCreateTime > DATEADD(MINUTE,-10,GETDATE())
         List<Smscode> smscode=Smscode.dao.find(sql,phone,Constant.smsType_Device);
         return smscode.isEmpty();
     }
@@ -51,5 +53,10 @@ public class SMSService {
         smscode.setSmsPhone(phone);
         smscode.setSmsType(Constant.smsType_Device);
         smscode.save();
+    }
+
+    public void updateTable() {
+        String sql="delete from smscode";
+        Db.update(sql);
     }
 }

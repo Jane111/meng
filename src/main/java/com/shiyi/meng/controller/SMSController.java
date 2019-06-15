@@ -3,12 +3,14 @@ package com.shiyi.meng.controller;
 import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
+import com.jfinal.plugin.activerecord.Db;
 import com.shiyi.meng.service.SMSService;
 import com.shiyi.meng.util.BaseResponse;
 import com.shiyi.meng.util.Constant;
 import com.shiyi.meng.util.ResultCodeEnum;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -90,6 +92,13 @@ public class SMSController {
             // 网络 IO 错误
             e.printStackTrace();
         }
+    }
+
+
+    //每10分钟清空一遍
+    @Scheduled(cron = "0 0/10 * * ?")
+    public void updateTable(){
+        smsService.updateTable();
     }
 
 }

@@ -145,9 +145,11 @@ public class UServiceL {
         for(Signstore signstore:signstoreList)
         {
             Store store = Store.dao.findById(signstore.getSsStore());//得到用户关注的店铺信息
-            packStore(store).put("ssId",signstore.getSsId());//得到签约的id，以便之后状态的改变
-            packStore(store).put("ssStatus",signstore.getSsStatus());//签约的状态
-            signStoreList.add(packStore(store));
+            JSONObject storeDetail = new JSONObject();
+            storeDetail.putAll(packStore(store));
+            storeDetail.put("ssId",signstore.getSsId());//得到签约的id，以便之后状态的改变
+            storeDetail.put("ssStatus",signstore.getSsStatus());//签约的状态
+            signStoreList.add(storeDetail);
         }
         return signStoreList;
     }

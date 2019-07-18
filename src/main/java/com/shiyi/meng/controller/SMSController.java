@@ -11,6 +11,7 @@ import com.shiyi.meng.util.ResultCodeEnum;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 
+@Component
 @RestController
 @RequestMapping("/sms")
 public class SMSController {
@@ -96,7 +98,7 @@ public class SMSController {
 
 
     //每10分钟清空一遍
-    @Scheduled(cron = "0 0/10 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void updateTable(){
         smsService.updateTable();
     }

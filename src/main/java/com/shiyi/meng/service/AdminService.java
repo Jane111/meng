@@ -448,7 +448,7 @@ public class AdminService {
         object.put("ucId",uc.getUcId());
         object.put("ucOwner",uc.getUcOwner());
         object.put("uWeiXinName",User.dao.findById(uc.getUcId()).getUWeiXinName());
-        object.put("ucContent",uc.getUcContent());
+//        object.put("ucContent",uc.getUcContent());
         object.put("ucStore",uc.getUcStore());
         object.put("sName",Store.dao.findById(uc.getUcStore()).getSName());
         return object;

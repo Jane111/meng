@@ -1,13 +1,31 @@
 package com.shiyi.meng.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shiyi.meng.model.*;
+import com.shiyi.meng.util.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.KeyStore;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class AServiceL {
@@ -199,9 +217,38 @@ public class AServiceL {
         return showReturnList;
     }
 
+    /**
+     * 功能描述: <调用企业支付到零钱的接口>
+     **/
+    public void mToPOrder(BigDecimal money, String openid) throws Exception {
+        Map<String, String> reqParams = new HashMap<>();
+        //微信分配的小程序ID
+        reqParams.put("mch_appid", Constant.APPID);
+        //微信支付分配的商户号
+        reqParams.put("mchid", Constant.MCH_ID);
+        //随机字符串
+        reqParams.put("nonce_str", System.currentTimeMillis() / 1000 + "");
+        //商户订单号，需保持唯一性(只能是字母或者数字，不能包含有其他字符)
+        String partner_trade_no= UUID.randomUUID().toString().replaceAll("-", "");
+        reqParams.put("partner_trade_no", partner_trade_no);
+        //用户openid，oxTWIuGaIt6gTKsQRLau2M0yL16E，商户appid下，某用户的openid
+        reqParams.put("openid", openid);
+        //校验用户姓名选项 	NO_CHECK：不校验真实姓名/FORCE_CHECK：强校验真实姓名
+        reqParams.put("check_name", "NO_CHECK");
+        //订单总金额，单位为分
+        reqParams.put("amount", money.multiply(BigDecimal.valueOf(100)).intValue() + "");//都是整数，以分为单位
+        //终端IP
+        reqParams.put("spbill_create_ip", "127.0.0.1");
+        //企业付款备注,企业付款备注，必填。
+        reqParams.put("desc", "萌系餐饮小程序交易成功押金返还");
+        //签名
+        String sign = WXPayUtil.generateSignature(reqParams, Constant.KEY);
+        reqParams.put("sign", sign);
+
+        String xml = PaymentKit.toXml(reqParams);
+        String restxml = HttpUtils.posts("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", xml);
+        System.out.println(restxml);
 
 
-
-
-
+    }
 }

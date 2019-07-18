@@ -15,6 +15,10 @@ public class Constant {
 	public static String NOTIFY_URL = "localhost:8080/user/wxProPayNotify";//回调地址
 	public static String KEY = "2cb6b821ae8dbd38fa5e4f80f72b32c9";//API密钥，交易过程中生成签名的密钥
 
+    //返款对应参数
+    public static  final String RETURNMONEYTOBUY="98";
+    public static  final String RETURNMONEYTOSALEREDUCE="968";
+
 	//图像存储相关信息
 	public static  final String Secret_id="AKIDiGFMJ2b3D9r10pop0wHPp5C5j7LiAvCG";
 	public static final String Secret_key="rSoukW6RWP3RbVKuEdqoWzD3Ki1yc5My";

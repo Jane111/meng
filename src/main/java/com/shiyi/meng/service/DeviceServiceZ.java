@@ -590,4 +590,50 @@ public class DeviceServiceZ {
         return true;
     }
 
+    public JSONObject updateStoreShowInfo(String sId) {
+        Store store=Store.dao.findById(sId);
+        JSONObject object=new JSONObject();
+        String photo=store.getSPhoto();
+        String[] photos=photo.split("###");
+        object.put("sPhoto",photos);
+        object.put("sType",store.getSType());
+        object.put("sLoc",store.getSLoc());
+        object.put("sLng",store.getSLng());
+        object.put("sLat",store.getSLat());
+        object.put("sCity",store.getSCity());
+        object.put("sUserWriteLoc",store.getSUserWriteLoc());
+        object.put("sDes",store.getSDes());
+        object.put("sName",store.getSName());
+        object.put("sConName",store.getSConName());
+        object.put("sPhone",store.getSPhone());
+        object.put("sConnectType",store.getSConnectType());
+        object.put("sConnectWay",store.getSConnectWay());
+        object.put("sTranMoney",store.getSTranMoney());
+        object.put("sTotalFloor",store.getSTotalFloor());
+        object.put("sPayMethod",store.getSPayMethod());
+        object.put("sWareHouse",store.getSWareHouse());
+        object.put("sAera",store.getSAera());
+        object.put("sLeftTime",store.getSLeftTime());
+        object.put("sStoreStatus",store.getSStoreStatus());
+        object.put("sECharge",store.getSECharge());
+        object.put("sWCharge",store.getSWCharge());
+        object.put("sFee",store.getSFee());
+        object.put("sTag",store.getSTag());
+        object.put("sRentMoney",store.getSRentMoney());
+        object.put("sDeposit",store.getSDeposit());
+        object.put("sPriceType",store.getSsPriceType());
+
+        return object;
+    }
+
+    public boolean uploadUserContract(BigInteger ucOwner, BigInteger ucStore, String ucIdUrl, String ucBusinessUrL, String ucContractUrl) {
+        Usercontract usercontract=new Usercontract();
+        usercontract.setUcContractUrl(ucContractUrl);
+        usercontract.setUcOwner(ucOwner);
+        usercontract.setUcStore(ucStore);
+        usercontract.setUcStatus(1);
+        usercontract.setUcIdUrl(ucIdUrl);
+        usercontract.setUcBusinessUrl(ucBusinessUrL);
+        return usercontract.save();
+    }
 }

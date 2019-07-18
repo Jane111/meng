@@ -53,7 +53,7 @@ public abstract class BaseAbnormalstore<M extends BaseAbnormalstore<M>> extends 
 		set("asType", asType);
 	}
 
-	public String getAsType() {
+	public Integer getAsType() {
 		return get("asType");
 	}
 

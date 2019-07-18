@@ -95,12 +95,12 @@ public class SMSService {
     }
 
     public void deleteDeviceSame(String phone) {
-        String sql="delete from smscode where smsPhone=? where smsType=1";
+        String sql="delete from smscode where smsPhone=? and smsType=1";
         Db.update(sql,phone);
     }
 
     public void deleteStoreSame(String phone) {
-        String sql="delete from smscode where smsPhone=? where smsType=2";
+        String sql="delete from smscode where smsPhone=? and smsType=2";
         Db.update(sql,phone);
     }
 }

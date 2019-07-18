@@ -312,12 +312,46 @@ public class UControllerL {
         br.setData(null);
         return br;
     }
+    //首页的刷新置顶
+    @RequestMapping("/updateHomeStoreRank")
+    public BaseResponse updateHomeStoreRank(
+            @RequestParam("sId") BigInteger sId,
+            @RequestParam("uCity") String uCity,
+            @RequestParam("pageIndex") Integer pageIndex,
+            @RequestParam("pageSize") Integer pageSize
+    )
+    {
+        //得到sId对应的store
+        Store pastStore = Store.dao.findById(sId);
+        Date now = new Date();
+        Date modifyTime=pastStore.getSModifyTime();
+        Date beforFive=new Date(now.getTime() - 300000);
+        if(modifyTime.before(beforFive)||pastStore.getSFlushTime().equals(new BigInteger("0")))
+        {
+            pastStore.setSFlushTime(pastStore.getSFlushTime().add(new BigInteger("1")));
+            boolean flag = pastStore.update();//更新店铺修改时间
+            if(flag)
+            {
+                br.setResult(ResultCodeEnum.SUCCESS);
+            }
+            else
+            {
+                br.setResult(ResultCodeEnum.UPDATE_ERROR);
+            }
+        }else
+        {
+            br.setResult(ResultCodeEnum.DO_NOT_IN_TIME);
+        }
+        JSONArray array=uServiceL.getStoreListHomePage(uCity, pageIndex, pageSize);
+        br.setData(array);
+        return br;
+    }
 
     //查看店铺详情
     @RequestMapping("/showStoreDetail")
     public BaseResponse showStoreDetail(
             @RequestParam("sId") BigInteger sId,
-            @RequestParam(value = "uId",required = false) BigInteger uId
+            @RequestParam("uId") BigInteger uId
     )
     {
         if(uId==null)
@@ -820,8 +854,8 @@ public class UControllerL {
         }else
         {
             br.setResult(ResultCodeEnum.ADD_ERROR);
+            br.setData(null);
         }
-        br.setData(null);
         return br;
     }
     //显示所有提示信息
@@ -990,11 +1024,7 @@ public class UControllerL {
             @RequestParam("sdId") BigInteger sdId
     )
     {
-        Signstore signstore = new Signstore();
-        signstore.setSsId(ssId);
-        signstore.setSsStatus(1);//交易失败提交退款
-        signstore.setSsStopDeal(sdId);//连接到退款乱申请具体信息页面
-        boolean flag = signstore.update();
+        boolean flag = uServiceL.addTuiApply(ssId,sdId);
         if(flag)
         {
             br.setData(ResultCodeEnum.SUCCESS);//修改状态成功

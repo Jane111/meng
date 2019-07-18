@@ -912,6 +912,39 @@ public class DControllerZ {
         return response;
     }
 
+    @RequestMapping("updateStoreShowInfo")
+    public BaseResponse updateStoreShowInfo(
+            @RequestParam("sId")String sId){
+        BaseResponse response=new BaseResponse();
+        JSONObject store=deviceService.updateStoreShowInfo(sId);
+        if (store==null||store.isEmpty()){
+            response.setResult(ResultCodeEnum.FIND_FAILURE);
+        }
+        else {
+            response.setData(store);
+            response.setResult(ResultCodeEnum.SUCCESS);
+        }
+        return response;
+    }
+
+    @RequestMapping("/uploadUserContract")
+    public BaseResponse uploadUserContract(
+            @RequestParam("ucOwner")BigInteger ucOwner,
+            @RequestParam("ucStore")BigInteger ucStore,
+            @RequestParam("ucIdUrl")String ucIdUrl,
+            @RequestParam("ucBusinessUrL")String ucBusinessUrL,
+            @RequestParam("ucContractUrl")String ucContractUrl
+    ){
+        BaseResponse baseResponse=new BaseResponse();
+        if (deviceService.uploadUserContract(ucOwner,ucStore,ucIdUrl,ucBusinessUrL,ucContractUrl)){
+            baseResponse.setResult(ResultCodeEnum.SUCCESS);
+        }
+        else
+        {
+            baseResponse.setResult(ResultCodeEnum.ADD_FAILURE);
+        }
+        return baseResponse;
+    }
 
 
 }

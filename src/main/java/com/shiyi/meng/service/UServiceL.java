@@ -319,4 +319,11 @@ public class UServiceL {
     }
 
 
+    public boolean addTuiApply(BigInteger ssId,BigInteger sdId) {
+        Signstore signstore = new Signstore();
+        signstore.setSsId(ssId);
+        signstore.setSsStatus(1);//交易失败提交退款
+        signstore.setSsStopDeal(sdId);//连接到退款乱申请具体信息页面
+        return signstore.update();
+    }
 }

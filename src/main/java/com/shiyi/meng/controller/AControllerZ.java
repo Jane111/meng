@@ -464,23 +464,24 @@ public class AControllerZ {
     ){
         BaseResponse baseResponse=new BaseResponse();
         JSONArray array=adminService.getContractModelList();
-        if (array.isEmpty()){
+        if (array==null||array.isEmpty()){
             baseResponse.setResult(ResultCodeEnum.FIND_FAILURE);//20004
         }
         else {
-            baseResponse.setResult(ResultCodeEnum.SUCCESS);
+            System.out.println(array);
             baseResponse.setData(array);
-
+            baseResponse.setResult(ResultCodeEnum.SUCCESS);
         }
         return baseResponse;
     }
 
-    @RequestMapping("/deleteContractModel")
-    public BaseResponse deleteContractModel(
-            @RequestParam("ctId") BigInteger ctId
+    @RequestMapping("/updateContractModel")
+    public BaseResponse updateContractModel(
+            @RequestParam("ctId") BigInteger ctId,
+            @RequestParam("ctContent") String ctContent
     ){//删除合同记录
         BaseResponse baseResponse=new BaseResponse();
-        if (adminService.deleteContractModel(ctId)){
+        if (adminService.updateContractModel(ctId,ctContent)){
             baseResponse.setResult(ResultCodeEnum.SUCCESS);
         }
         else {

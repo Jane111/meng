@@ -199,8 +199,21 @@ public class AdminService {
         String dOwnerName=getDeviceOwnerName(device.getDOwner());
         object.put("dOwnerName",dOwnerName);
         object.put("dPhone",device.getDPhone());
-        object.put("dOtherConnect",device.getDOtherConnet());
-        object.put("dOtherType",device.getDOtherType());//其他联系方式类型
+
+        String otherconnect=device.getDOtherConnet();
+        Integer type=device.getDOtherType();
+        if (type.equals(1)){//weixin
+            otherconnect="weixin "+otherconnect;
+        }
+        else if(type.equals(2) ){//qq
+            otherconnect="qq "+otherconnect;
+        }
+        else if (type.equals(3)){//mail
+            otherconnect="mail "+otherconnect;
+        }
+
+        object.put("dOtherConnect",otherconnect);
+        object.put("dOtherType",type);//其他联系方式类型
 
         object.put("dId",device.getDId());
         object.put("dDcpt",device.getDDcpt());
@@ -420,7 +433,7 @@ public class AdminService {
     }
 
     public JSONArray getContractModelList() {
-        String sql="select * from contractTemplete  Order By ctModifyTime Desc ";
+        String sql="select * from contracttemplate  Order By ctModifyTime Desc ";
         JSONArray array=new JSONArray();
         List<Contracttemplate> list=Contracttemplate.dao.find(sql);
         for (Contracttemplate contracttemplate:list){
@@ -437,14 +450,15 @@ public class AdminService {
         return object;
     }
     //删除数据库里
-    public boolean deleteContractModel(BigInteger ctId) {
+    public boolean updateContractModel(BigInteger ctId, String ctContent) {
         Contracttemplate contracttemplate=Contracttemplate.dao.findById(ctId);
-        return contracttemplate.delete();
+        contracttemplate.setCtContent(ctContent);
+        return contracttemplate.update();
     }
 
     //获取用户上传合同列表
     public JSONArray getUserContratcList() {
-        String sql="select * from usercontract where ucStatus=?  Order By ctModifyTime Desc ";
+        String sql="select * from usercontract where ucStatus=?  Order By ucModifyTime Desc ";
         List<Usercontract> list=Usercontract.dao.find(sql, Constant.userContrac_Wait);
         JSONArray array=new JSONArray();
         for (Usercontract uc:list){
@@ -458,8 +472,14 @@ public class AdminService {
         JSONObject object=new JSONObject();
         object.put("ucId",uc.getUcId());
         object.put("ucOwner",uc.getUcOwner());
+        String ucId=uc.getUcIdUrl();
+        String []ucIds=ucId.split("###");
+        object.put("ucIdUrl",ucIds);
+        object.put("ucBusinessUrl",uc.getUcBusinessUrl());
         object.put("uWeiXinName",User.dao.findById(uc.getUcId()).getUWeiXinName());
-//        object.put("ucContent",uc.getUcContent());
+        String ucContent=uc.getUcContractUrl();
+        String [] contents=ucContent.split("###");
+        object.put("ucContent",contents);
         object.put("ucStore",uc.getUcStore());
         object.put("sName",Store.dao.findById(uc.getUcStore()).getSName());
         return object;
@@ -475,4 +495,5 @@ public class AdminService {
         }
         return usercontract.update();
     }
+
 }

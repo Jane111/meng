@@ -48,8 +48,19 @@ public class AdminService {
         object.put("dbLng",db.getDbLng());
         object.put("dbDeviceType",db.getDbDeviceType().replaceAll("###","、"));
         object.put("dbPhone",db.getDbPhone());
-        object.put("dbOtherConnect",db.getDbOtherConnect());
-        object.put("dbOtherType",db.getDbOtherType());
+        String otherconnect=db.getDbOtherConnect();
+        Integer type=db.getDbOtherType();
+        if (type.equals(1)){//weixin
+            otherconnect="weixin "+otherconnect;
+        }
+        else if(type.equals(2) ){//qq
+            otherconnect="qq "+otherconnect;
+        }
+        else if (type.equals(3)){//mail
+            otherconnect="mail "+otherconnect;
+        }
+        object.put("dbOtherConnect",otherconnect);
+        object.put("dbOtherType",type);
         object.put("dbStatus",db.getDbStatus());
         return object;
     }
@@ -95,6 +106,10 @@ public class AdminService {
 
     private JSONObject packNewAndRepair(Devicebusiness db) {
         JSONObject object=packSecondDB(db);
+        if(db.getDbImg()==null||db.getDbImg().isEmpty()){
+            object.put("dbImg","");
+            return object;
+        }
         String[] dbImg=db.getDbImg().split("###");
         object.put("dbImg",dbImg);
         return object;

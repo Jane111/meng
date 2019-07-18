@@ -31,8 +31,6 @@ public class DControllerZ {
 
     @Autowired
     DeviceServiceZ deviceService;
-    @Autowired
-    BaseResponse response;
 
     //首页显示设备列表 根据用户经纬度 计算距离排序
     @RequestMapping("/getList")
@@ -42,13 +40,16 @@ public class DControllerZ {
             @RequestParam("uLng") String uLng, //用户经度
             @RequestParam("start") String start //开始个数 一次传30个
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=new JSONArray();
         array=deviceService.getDeviceLists(uLat,uLng,start);
-        if (array==null){
+        if (array==null||array.isEmpty()){
             response.setData(null);
+            System.out.println("null");
             response.setResult(ResultCodeEnum.FIND_FAILURE);
         }
         else {
+            System.out.println("getlist array.isEmpty"+array.isEmpty()+" array"+array.get(0));
             response.setData(array);
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -58,6 +59,7 @@ public class DControllerZ {
     @RequestMapping("/getTypeList")
     @ResponseBody
     public BaseResponse getTypeList(){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getDeviceType();
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -70,8 +72,9 @@ public class DControllerZ {
     public BaseResponse selectList(
             @RequestParam("dType") BigInteger dType
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.selectList(dType);
-        if (array==null){
+        if (array==null||array.isEmpty()){
             response.setData(null);
             response.setResult(ResultCodeEnum.FIND_FAILURE);
         }
@@ -90,8 +93,9 @@ public class DControllerZ {
             @RequestParam("uLng") String uLng, //用户经度
             @RequestParam("start") String start //开始个数 一次传30个
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getNewList(uLat,uLng,start);
-        if (array==null){
+        if (array==null||array.isEmpty()){
             response.setData(null);
             response.setResult(ResultCodeEnum.FIND_FAILURE);
         }
@@ -106,10 +110,12 @@ public class DControllerZ {
     @RequestMapping("/selectNewList")
     @ResponseBody
     public BaseResponse selectNewList(
-            @RequestParam("dType") BigInteger dType
+            @RequestParam("dType") BigInteger dType,
+            @RequestParam("start") Integer start
     ){
-        JSONArray array=deviceService.selectNewList(dType);
-        if (array==null){
+        BaseResponse response=new BaseResponse();
+        JSONArray array=deviceService.selectNewList(dType,start);
+        if (array==null||array.isEmpty()){
             response.setData(null);
             response.setResult(ResultCodeEnum.FIND_FAILURE);
         }
@@ -139,14 +145,14 @@ public class DControllerZ {
             @RequestParam("dOtherType") int dOtherType,//奇台联系方式类型 1-微信 ，2-qq,3-邮箱
             @RequestParam("dOwner") BigInteger dOwner,//发布者
             @RequestParam("dDiscuss") Integer dDiscuss,//是否面议
-            @RequestParam("dClean") Integer dClean,//是否清洗干净
-            @RequestParam("code")String code
+            @RequestParam("dClean") Integer dClean//是否清洗干净
+            //@RequestParam("code")String code
     ){
         BaseResponse response=new BaseResponse();
-        if (deviceService.checkSMSDeviceCode(dPhone,code)){
+        /*if (deviceService.checkSMSDeviceCode(dPhone,code)){
             response.setResult(ResultCodeEnum.WRONG_CODE);//20009
             return response;
-        }
+        }*/
 
         Device device=new Device();
         device.setDDcpt(dDcpt);
@@ -191,6 +197,7 @@ public class DControllerZ {
             @RequestParam("dOwner") BigInteger dOwner,//发布者
             @RequestParam("dDiscuss") Integer dDiscuss//是否面议
     ){
+        BaseResponse response=new BaseResponse();
         Device device=new Device();
         device.setDDcpt(dDcpt);
         device.setDDiscuss(dDiscuss);
@@ -228,6 +235,7 @@ public class DControllerZ {
             @RequestParam("dbOtherConnect") String dbOtherConnect,
             @RequestParam("dbOtherType") int dbOtherType//其他联系方式类型 1-微信 ，2-qq,3-邮箱
     ){
+        BaseResponse response=new BaseResponse();
         Devicebusiness devicebusiness=new Devicebusiness();
         devicebusiness.setDbUser(dbUser);
         devicebusiness.setDbDeviceType(dbDeviceType);
@@ -267,6 +275,7 @@ public class DControllerZ {
             @RequestParam("dbOtherConnect") String dbOtherConnect,
             @RequestParam("dbOtherType") int dbOtherType//其他联系方式类型 1-微信 ，2-qq,3-邮箱
     ){
+        BaseResponse response=new BaseResponse();
         Devicebusiness devicebusiness=new Devicebusiness();
         devicebusiness.setDbDeviceType(dbDeviceType);
         devicebusiness.setDbUser(dbUser);
@@ -306,6 +315,7 @@ public class DControllerZ {
             @RequestParam("dbOtherConnect") String dbOtherConnect,
             @RequestParam("dbOtherType") int dbOtherType//奇台联系方式类型 1-微信 ，2-qq,3-邮箱
     ){
+        BaseResponse response=new BaseResponse();
         Devicebusiness devicebusiness=new Devicebusiness();
         devicebusiness.setDbDeviceType(dbDeviceType);
         devicebusiness.setDbUser(dbUser);
@@ -336,6 +346,7 @@ public class DControllerZ {
     public BaseResponse getMyPublished(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getMyPublished(uId);
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -348,6 +359,7 @@ public class DControllerZ {
     public BaseResponse getOnCarriage(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getOnCarriage(uId);
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -360,6 +372,7 @@ public class DControllerZ {
     public BaseResponse underCarriage(
             @RequestParam("dId") String dId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.underCarriage(dId)){
             response.setResult(ResultCodeEnum.SUCCESS);
             return response;
@@ -376,6 +389,7 @@ public class DControllerZ {
     public BaseResponse getMyUnderCarraige(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=new JSONArray();
         array=deviceService.getMyUnderCarraige(uId);
         response.setData(array);
@@ -389,6 +403,7 @@ public class DControllerZ {
     public BaseResponse editShowNew(
             @RequestParam("dId") String dId
     ){
+        BaseResponse response=new BaseResponse();
         JSONObject object=deviceService.editShowNew(dId);
         response.setData(object);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -401,6 +416,7 @@ public class DControllerZ {
     public BaseResponse editShowOld(
             @RequestParam("dId") String dId
     ){
+        BaseResponse response=new BaseResponse();
         JSONObject object=deviceService.editShowOld(dId);
         response.setData(object);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -429,6 +445,7 @@ public class DControllerZ {
             @RequestParam("dDiscuss") Integer dDiscuss,//是否面议
             @RequestParam("dClean") Integer dClean//是否清洗干净
     ){
+        BaseResponse response=new BaseResponse();
         Device device=deviceService.getDeviceById(dId);
         device.setDDcpt(dDcpt);
         device.setDDiscuss(dDiscuss);
@@ -472,6 +489,7 @@ public class DControllerZ {
             @RequestParam("dOwner") BigInteger dOwner,//发布者
             @RequestParam("dDiscuss") Integer dDiscuss//是否面议
     ){
+        BaseResponse response=new BaseResponse();
         Device device=deviceService.getDeviceById(dId);
         device.setDDcpt(dDcpt);
         device.setDDiscuss(dDiscuss);
@@ -500,6 +518,7 @@ public class DControllerZ {
     public BaseResponse deleteUnderCarraige(
             @RequestParam("dId") String dId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.deleteUnderCarraige(dId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -515,6 +534,7 @@ public class DControllerZ {
     public BaseResponse getMyBill(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getMyBill(uId);
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -526,6 +546,7 @@ public class DControllerZ {
     public BaseResponse getMyFollow(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getMyFollow(uId);
         response.setData(array);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -539,6 +560,7 @@ public class DControllerZ {
             @RequestParam("dId") String dId,
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONObject device=deviceService.getDeviceInfo(dId,uId);
         response.setData(device);
         response.setResult(ResultCodeEnum.SUCCESS);
@@ -566,6 +588,7 @@ public class DControllerZ {
             @RequestParam("dId") BigInteger dId,
             @RequestParam("uId") BigInteger uId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.followDevice(dId,uId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }else {
@@ -587,6 +610,7 @@ public class DControllerZ {
             @RequestParam("rdName") String rdName,
             @RequestParam("rdPhone") String rdPhone
     ){
+        BaseResponse response=new BaseResponse();
         Reportdevice reportdevice=new Reportdevice();
         reportdevice.setRdReporter(rdReporter);
         reportdevice.setRdDevice(rdDevice);
@@ -611,6 +635,7 @@ public class DControllerZ {
             @RequestParam("dId") String dId,
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.unfollowDevice(dId,uId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }else {
@@ -623,6 +648,7 @@ public class DControllerZ {
     public BaseResponse reUpDevice(
             @RequestParam("dId") String dId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.reUpDevice(dId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -637,6 +663,7 @@ public class DControllerZ {
     public BaseResponse deleteBuyRecord(
             @RequestParam("/bId") String bId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.deleteBuyRecord(bId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -712,6 +739,7 @@ public class DControllerZ {
             @RequestParam("sContent") String sContent
     )
     {
+        BaseResponse response=new BaseResponse();
         JSONArray deviceList = deviceService.searchDeviceByName(sContent);
         if(!deviceList.isEmpty())
         {
@@ -731,6 +759,7 @@ public class DControllerZ {
     public BaseResponse isNewDevicebusiness(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         if (deviceService.isNewDevicebusiness(uId)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -746,8 +775,9 @@ public class DControllerZ {
     public BaseResponse getPassDevice(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getPassDevice(uId);
-        if (array==null){
+        if (array==null||array.isEmpty()){
             response.setData(null);
             response.setResult(ResultCodeEnum.FIND_FAILURE);
         }
@@ -765,13 +795,13 @@ public class DControllerZ {
             @RequestParam("uLng") String uLng,
             @RequestParam("start") String start //开始个数 一次传30个
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getRepairList(uLat,uLng,start);
-        if (array==null){
-            response.setData(array);
-            response.setResult(ResultCodeEnum.SUCCESS);
+        if (array==null||array.isEmpty()){
+            response.setResult(ResultCodeEnum.FIND_FAILURE);
         }else {
             response.setData(array);
-            response.setResult(ResultCodeEnum.FIND_FAILURE);
+            response.setResult(ResultCodeEnum.SUCCESS);
         }
         return response;
     }
@@ -783,13 +813,13 @@ public class DControllerZ {
             @RequestParam("uLng") String uLng,
             @RequestParam("start") String start //开始个数 一次传30个
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getSeconddbList(uLat,uLng,start);
-        if (array==null){
-            response.setData(array);
-            response.setResult(ResultCodeEnum.SUCCESS);
+        if (array==null||array.isEmpty()){
+            response.setResult(ResultCodeEnum.FIND_FAILURE);
         }else {
             response.setData(array);
-            response.setResult(ResultCodeEnum.FIND_FAILURE);
+            response.setResult(ResultCodeEnum.SUCCESS);
         }
         return response;
     }
@@ -801,13 +831,14 @@ public class DControllerZ {
             @RequestParam("uLng") String uLng,
             @RequestParam("start") String start //开始个数 一次传30个
     ){
+        BaseResponse response=new BaseResponse();
         JSONArray array=deviceService.getNewdbList(uLat,uLng,start);
-        if (array==null){
-            response.setData(array);
-            response.setResult(ResultCodeEnum.SUCCESS);
-        }else {
+        if (array==null||array.isEmpty()){
             response.setData(array);
             response.setResult(ResultCodeEnum.FIND_FAILURE);
+        }else {
+            response.setData(array);
+            response.setResult(ResultCodeEnum.SUCCESS);
         }
         return response;
     }
@@ -818,6 +849,7 @@ public class DControllerZ {
     public BaseResponse getDevicebusinessStatus(
             @RequestParam("uId") String uId
     ){
+        BaseResponse response=new BaseResponse();
         JSONObject devicebusiness=deviceService.getDevicebusinessStatus(uId);
         if (devicebusiness==null){
             response.setResult(ResultCodeEnum.FIND_FAILURE);
@@ -832,6 +864,36 @@ public class DControllerZ {
 
     @RequestMapping("/flushTopDevice")
     public BaseResponse flushTopDevice(
+            @RequestParam("dId") BigInteger dId,
+            @RequestParam("uLat") String uLat, //用户纬度
+            @RequestParam("uLng") String uLng, //用户经度
+            @RequestParam("start") String start //开始个数 一次传30个
+    ){
+        BaseResponse response=new BaseResponse();
+        System.out.println("flushTop"+dId);
+        if (deviceService.isInValidTime(dId)){
+            if (deviceService.flushTopDevice(dId)){
+                response.setResult(ResultCodeEnum.SUCCESS);
+            }
+            else {
+                response.setResult(ResultCodeEnum.UPDATE_FAILURE);
+            }
+        }
+        else {
+            response.setResult(ResultCodeEnum.DO_NOT_IN_TIME);//不在有效刷新时间内
+        }
+        JSONArray array=deviceService.getDeviceLists(uLat,uLng,start);
+        if (array==null||array.isEmpty()){
+            response.setData(null);
+        }
+        else {
+            response.setData(array);
+        }
+        return response;
+    }
+
+    @RequestMapping("/mineflushTopDevice")
+    public BaseResponse mineflushTopDevice(
             @RequestParam("dId") BigInteger dId
     ){
         BaseResponse response=new BaseResponse();

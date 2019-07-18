@@ -446,7 +446,7 @@ public class AControllerL {
         Integer unCheckReleaseStore = Db.queryInt("select count(*) from store " +
                 "where sStatus=0");
         //待审核举报店铺
-        Integer unCheckAbnormalStore = Db.queryInt("select count(*) from store " +
+        Integer unCheckAbnormalStore = Db.queryInt("select count(*) from abnormalstore " +
                 "where asStatus=0");
         //待审核设备
         Integer unCheckDevice = Db.queryInt("select count(*) from device " +
@@ -465,6 +465,7 @@ public class AControllerL {
         returnData.put("unCheckReportDevice",unCheckReportDevice);
         if(returnData!=null)
         {
+            br.setData(returnData);
             br.setResult(ResultCodeEnum.SUCCESS);
         }else
         {

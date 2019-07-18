@@ -32,7 +32,7 @@ public class DeviceServiceZ {
     public JSONArray getDeviceLists(String uLat,String uLng,String start) {
         JSONArray showDeivceList = new JSONArray();
         List<Device> deviceList = Device.dao.find("select * from device where  dStatus=2 and dHand!=1 " +
-                " order by dModifyTime desc limit "+start+",10");
+                " order by dModifyTime desc ,ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10");
         //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
         for(Device device:deviceList)
         {
@@ -95,7 +95,7 @@ public class DeviceServiceZ {
     //获取新设备列表
     public JSONArray getNewList(String uLat,String uLng,String start) {
         String sql="select * from device where dHand=1 and dStatus=2 " +
-                "order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                "order by dModifyTime desc, ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Device> deviceList=Device.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Device device:deviceList){
@@ -105,9 +105,9 @@ public class DeviceServiceZ {
         }
         return array;
     }
-    //根据二手类别筛选新设备列表
-    public JSONArray selectNewList(BigInteger dType) {
-        String sql="select * from device where dHand=2 and dType=? order by dModifyTime desc";
+    //根据新类别筛选新设备列表
+    public JSONArray selectNewList(BigInteger dType,Integer start) {
+        String sql="select * from device where dHand=2 and dType=? order by dModifyTime desc limit "+start+" ,10";
         List<Device> deviceList=Device.dao.find(sql,dType);
         JSONArray array=new JSONArray();
         for (Device device:deviceList){
@@ -462,7 +462,7 @@ public class DeviceServiceZ {
     //获取附近维修商de
     public JSONArray getRepairList(String uLat, String uLng, String start) {
         String sql="select * from devicebusiness where dbType=3 and dbStatus ="+ Constant.dbStatus_Pass +
-                "  order by ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
+                "  order by  ACOS(SIN(("+uLat+" * 3.1415) / 180 ) *SIN((dbLat * 3.1415) / 180 ) +COS(("+uLat+" * 3.1415) / 180 ) * COS((dbLat * 3.1415) / 180 ) *COS(("+uLng+" * 3.1415) / 180 - (dbLng * 3.1415) / 180 ) ) * 6380  asc  limit "+start+",10";
         List<Devicebusiness> devicebusinesses=Devicebusiness.dao.find(sql);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinesses){

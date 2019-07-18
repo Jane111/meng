@@ -26,9 +26,10 @@ public enum ResultCodeEnum
 	UPDATE_FAILURE("20005","修改失败"),
 	DO_NOT_HAVE_RIGHT("20006","没有权限申请"),
     HAS_REGISTER("20008","已经申请入驻过"),
-	WRONG_CODE("20009","验证码错误");
+	WRONG_CODE("20009","验证码错误"),
+	WRONG("20010","短信发送失败，请一分钟后再次尝试");
 
-    private String code;
+	private String code;
     private String desc;
 
     ResultCodeEnum(String code, String desc)

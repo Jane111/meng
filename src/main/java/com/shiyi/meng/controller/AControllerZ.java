@@ -324,7 +324,7 @@ public class AControllerZ {
         return baseResponse;
     }
 
-    //审核设备商
+    //审核设备商getSecondHandInfo
     @RequestMapping("/passOrNotD")
     public BaseResponse passOrNotD(
             @RequestParam("dId") BigInteger dId,

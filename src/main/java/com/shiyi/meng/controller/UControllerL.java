@@ -728,42 +728,42 @@ public class UControllerL {
     }
 
     //上传合同照片
-    @RequestMapping("/addUserContract")
-    public BaseResponse addUserContract(
-            @RequestParam("ucOwner") BigInteger ucOwner,
-            @RequestParam("ucContent") String ucContent,
-            @RequestParam("ucStore") BigInteger ucStore
-    )
-    {
-        Usercontract usercontract = new Usercontract();
-        usercontract.setUcOwner(ucOwner);
-        usercontract.setUcContent(ucContent);
-        usercontract.setUcStore(ucStore);
-        boolean flag = usercontract.save();//将该用户合同加入数据库
-
-        /*修改店铺状态*/
-        Store store = Store.dao.findById(ucStore);
-        store.setSStatus(4);//该店铺在交易过程中
-        store.update();
-
-        /*将该店铺设为用户签约过的店铺*/
-        Signstore signstore = new Signstore();
-        signstore.setSsUser(ucOwner);
-        signstore.setSsStore(ucStore);
-        signstore.setSsIsContract(1);//该签约店铺上传了合同
-        signstore.setSsStatus(6);//设置为正在交易的状态
-        signstore.save();
-
-        if(flag)
-        {
-            br.setResult(ResultCodeEnum.SUCCESS);//添加成功
-        }else
-        {
-            br.setResult(ResultCodeEnum.ADD_ERROR);//添加失败
-        }
-        br.setData(null);
-        return br;
-    }
+//    @RequestMapping("/addUserContract")
+//    public BaseResponse addUserContract(
+//            @RequestParam("ucOwner") BigInteger ucOwner,
+//            @RequestParam("ucContent") String ucContent,
+//            @RequestParam("ucStore") BigInteger ucStore
+//    )
+//    {
+//        Usercontract usercontract = new Usercontract();
+//        usercontract.setUcOwner(ucOwner);
+//        usercontract.setUcContent(ucContent);
+//        usercontract.setUcStore(ucStore);
+//        boolean flag = usercontract.save();//将该用户合同加入数据库
+//
+//        /*修改店铺状态*/
+//        Store store = Store.dao.findById(ucStore);
+//        store.setSStatus(4);//该店铺在交易过程中
+//        store.update();
+//
+//        /*将该店铺设为用户签约过的店铺*/
+//        Signstore signstore = new Signstore();
+//        signstore.setSsUser(ucOwner);
+//        signstore.setSsStore(ucStore);
+//        signstore.setSsIsContract(1);//该签约店铺上传了合同
+//        signstore.setSsStatus(6);//设置为正在交易的状态
+//        signstore.save();
+//
+//        if(flag)
+//        {
+//            br.setResult(ResultCodeEnum.SUCCESS);//添加成功
+//        }else
+//        {
+//            br.setResult(ResultCodeEnum.ADD_ERROR);//添加失败
+//        }
+//        br.setData(null);
+//        return br;
+//    }
 
     //得到用户上交押金总数
     @RequestMapping("/getTotalDeposit")
@@ -907,6 +907,49 @@ public class UControllerL {
         signstore.setSsUser(uId);
         signstore.setSsStore(sId);
         signstore.setSsIsMoney(1);//该签约店铺上交押金
+        signstore.setSsStatus(6);//设置为正在交易的状态
+        signstore.save();
+
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+
+    //签订合同
+    @RequestMapping("/addUserContract")
+    public BaseResponse addUserContract(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("sId") BigInteger sId,
+            @RequestParam("ucContractUrl") String ucContractUrl,//合同图片
+            @RequestParam("ucBusinessUrl") String ucBusinessUrl,//营业执照
+            @RequestParam("ucIdUrl") String ucIdUrl//身份证号
+    ){
+        //存储合同
+        Usercontract usercontract = new Usercontract();
+        usercontract.setUcStore(sId);
+        usercontract.setUcOwner(uId);
+        usercontract.setUcContractUrl(ucContractUrl);
+        usercontract.setUcBusinessUrl(ucBusinessUrl);
+        usercontract.setUcIdUrl(ucIdUrl);
+        usercontract.setUcStatus(0);//未审核状态
+        boolean flag = usercontract.save();
+
+        /*修改店铺状态*/
+        Store store = Store.dao.findById(sId);
+        store.setSStatus(4);//该店铺在交易过程中
+        store.update();
+
+        /*将该店铺设为用户签约过的店铺*/
+        Signstore signstore = new Signstore();
+        signstore.setSsUser(uId);
+        signstore.setSsStore(sId);
+        signstore.setSsIsContract(1);//该签约店铺签订合同
         signstore.setSsStatus(6);//设置为正在交易的状态
         signstore.save();
 

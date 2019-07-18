@@ -6,6 +6,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.util.BaseResponse;
+import com.shiyi.meng.util.Constant;
 import com.shiyi.meng.util.ResultCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.sasl.SaslServer;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -294,7 +299,22 @@ public class AControllerL {
         Signstore signstore = new Signstore();
         signstore.setSsId(ssId);
         signstore.setSsStatus(2);//同意返款申请
-        //todo 实际企业进行返款
+        //实际企业进行返款
+        BigInteger storeId = signstore.getSsStore();//交易对应店铺
+        BigInteger userId = signstore.getSsUser();//得到交易对应买方
+        String openIdBuyer = User.dao.findById(userId).getUCOpenId();//买方的openid
+        String openIdSaler = User.dao.findById(Store.dao.findById(storeId).getSUId()).getUCOpenId();
+        Transfermoney transfermoney = Transfermoney.dao.findFirst("select tmMoney from transfermoney " +
+                "where tmFrom=? AND tmStore=?",userId,storeId);//押金转账记录
+        BigDecimal money = new BigDecimal(transfermoney.getTmMoney());//获得押金金额
+
+        try {
+            aServiceL.mToPOrder(new BigDecimal(Constant.RETURNMONEYTOBUY),openIdBuyer);//向找店方返98元
+            aServiceL.mToPOrder(money.subtract(new BigDecimal(Constant.RETURNMONEYTOBUY)),openIdSaler);//向转店方返（押金-968元）
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         boolean flag = signstore.update();
         if(flag)
         {
@@ -403,10 +423,22 @@ public class AControllerL {
             @RequestParam("ssId") BigInteger ssId
     )
     {
-        Signstore signstore = new Signstore();
-        signstore.setSsId(ssId);
+        Signstore signstore = Signstore.dao.findById(ssId);
         signstore.setSsStatus(3);//同意退款申请
-        //todo 实际企业进行返款
+        //实际企业进行退款
+        BigInteger storeId = signstore.getSsStore();//交易对应店铺
+        BigInteger userId = signstore.getSsUser();//得到交易对应买方
+        String openId = User.dao.findById(userId).getUCOpenId();//买方的openid
+        Transfermoney transfermoney = Transfermoney.dao.findFirst("select tmMoney from transfermoney " +
+                "where tmFrom=? AND tmStore=?",userId,storeId);//押金转账记录
+        BigDecimal money = new BigDecimal(transfermoney.getTmMoney());//获得押金金额
+
+        try {
+            aServiceL.mToPOrder(money,openId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         boolean flag = signstore.update();
         if(flag)
         {
@@ -472,6 +504,27 @@ public class AControllerL {
             br.setResult(ResultCodeEnum.UPDATE_ERROR);
         }
         br.setData(null);
+        return br;
+    }
+
+    //企业返款给个人
+    @RequestMapping("/returnMoney")
+    public BaseResponse createOrder(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("money") BigDecimal money
+    ){
+
+        //调用接口获取openId
+        String openId = User.dao.findById(uId).getUCOpenId();
+//        BigDecimal money = new BigDecimal("0.3");
+        Map<String, String> reqParams = new HashMap<>();
+        try {
+            aServiceL.mToPOrder(money,openId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        br.setData(null);
+        br.setResult(ResultCodeEnum.SUCCESS);
         return br;
     }
 

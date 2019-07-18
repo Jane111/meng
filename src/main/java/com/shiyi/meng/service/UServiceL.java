@@ -317,66 +317,6 @@ public class UServiceL {
 
 
     }
-    /**
-     * 功能描述: <调用企业支付到零钱的接口>
-     **/
-    public Map<String, String> mToPOrder(String out_trade_no, BigDecimal money, String openid) throws Exception {
-        Map<String, String> reqParams = new HashMap<>();
-        //微信分配的小程序ID
-        reqParams.put("appid", Constant.APPID);
-        //微信支付分配的商户号
-        reqParams.put("mch_id", Constant.MCH_ID);
-        //随机字符串
-        reqParams.put("nonce_str", System.currentTimeMillis() / 1000 + "");
-        //签名类型
-        reqParams.put("sign_type", "MD5");
-        //充值订单 商品描述
-        reqParams.put("body", "萌系餐饮人-押金支付订单-微信小程序");
-        //商户订单号，需保持唯一性(只能是字母或者数字，不能包含有其他字符)
-        reqParams.put("out_trade_no", out_trade_no);
-        //用户openid，oxTWIuGaIt6gTKsQRLau2M0yL16E，商户appid下，某用户的openid
-        reqParams.put("openid", openid);
-        //校验用户姓名选项 	NO_CHECK：不校验真实姓名/FORCE_CHECK：强校验真实姓名
-        reqParams.put("check_name", "NO_CHECK");
-
-//        收款用户姓名 	re_user_name 	否 	王小王 	String(64) 	收款用户真实姓名。
-//        如果check_name设置为FORCE_CHECK，则必填用户真实姓名
-
-        //订单总金额，单位为分
-        reqParams.put("amount", money.multiply(BigDecimal.valueOf(100)).intValue() + "");//都是整数，以分为单位
-        //终端IP
-        reqParams.put("spbill_create_ip", "127.0.0.1");
-        //企业付款备注,企业付款备注，必填。
-        reqParams.put("desc", "萌系餐饮小程序交易成功押金返还");
-        //签名
-        String sign = WXPayUtil.generateSignature(reqParams, Constant.KEY);
-        reqParams.put("sign", sign);
-        /*
-        调用支付定义下单API,返回预付单信息 prepay_id
-         */
-        String xmlResult = PaymentApi.pushOrder(reqParams);
-        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
-        System.out.println(xmlResult);
-        //todo 将付款信息存入数据库
-        //预付单信息
-        String prepay_id = result.get("prepay_id");
-
-        /*
-        小程序调起支付数据签名
-         */
-        Map<String, String> packageParams = new HashMap<String, String>();
-        packageParams.put("appId", Constant.APPID);
-        packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
-        packageParams.put("nonceStr", System.currentTimeMillis() + "");
-        packageParams.put("package", "prepay_id=" + prepay_id);
-        packageParams.put("signType", "MD5");
-        String packageSign = WXPayUtil.generateSignature(packageParams, Constant.KEY);
-        packageParams.put("paySign", packageSign);
-        return packageParams;
-    }
-
-
-
 
 
 }

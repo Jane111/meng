@@ -27,14 +27,6 @@ public abstract class BaseUsercontract<M extends BaseUsercontract<M>> extends Mo
 		return get("ucOwner");
 	}
 
-	public void setUcContent(String ucContent) {
-		set("ucContent", ucContent);
-	}
-
-	public String getUcContent() {
-		return get("ucContent");
-	}
-
 	public void setUcStore(java.math.BigInteger  ucStore) {
 		set("ucStore", ucStore);
 	}
@@ -42,6 +34,30 @@ public abstract class BaseUsercontract<M extends BaseUsercontract<M>> extends Mo
 	public java.math.BigInteger  getUcStore() {
 		return get("ucStore");
 	}
+
+	public void setUcIdUrl(String ucIdUrl) {
+		set("ucIdUrl", ucIdUrl);
+	}
+
+	public String getUcIdUrl() {
+		return get("ucIdUrl");
+	}
+
+    public void setUcBusinessUrl(String ucBusinessUrl) {
+        set("ucBusinessUrl", ucBusinessUrl);
+    }
+
+    public String getUcBusinessUrl() {
+        return get("ucBusinessUrl");
+    }
+
+    public void setUcContractUrl(String ucContractUrl) {
+        set("ucContractUrl", ucContractUrl);
+    }
+
+    public String getUcContractUrl() {
+        return get("ucContractUrl");
+    }
 
 	public void setUcCreateTime(java.util.Date ucCreateTime) {
 		set("ucCreateTime", ucCreateTime);

@@ -355,4 +355,12 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sModifyTime");
 	}
 
+    public String  getSstartTime(){return get("sStartTime");};
+
+	public void setsStartTime(String sStartTime){set("sStartTime",sStartTime);}
+
+	public String  getSFreeTime(){return get("sFreeTime");};
+
+	public void setsFreeTime(String sFreeTime){set("sFreeTime",sFreeTime);}
+
 }

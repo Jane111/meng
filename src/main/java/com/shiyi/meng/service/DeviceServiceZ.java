@@ -622,7 +622,8 @@ public class DeviceServiceZ {
         object.put("sRentMoney",store.getSRentMoney());
         object.put("sDeposit",store.getSDeposit());
         object.put("sPriceType",store.getSsPriceType());
-
+        object.put("sStartTime",store.getSstartTime());
+        object.put("sFreeTime",store.getSFreeTime());
         return object;
     }
 

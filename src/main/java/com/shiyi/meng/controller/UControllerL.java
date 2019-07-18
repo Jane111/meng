@@ -116,7 +116,9 @@ public class UControllerL {
             @RequestParam("sFee") Float sFee,//物业费
             @RequestParam("sTag") String sTag,//标签
             @RequestParam("sRentMoney") Float sRentMoney,//月租金
-            @RequestParam("sDeposit") Float sDeposit//店铺售价
+            @RequestParam("sDeposit") Float sDeposit,//店铺售价
+            @RequestParam("sFreeTime")String sfreeTime,//免租期
+            @RequestParam("sStartTime")String sStartTime//起租期
     )
     {
         //为新添加的店铺分配最近的高校和商圈
@@ -186,6 +188,8 @@ public class UControllerL {
         store.setSRentMoney(sRentMoney);
         store.setSDeposit(sDeposit);
         store.setSStatus(0);//店铺状态为"未审核"
+        store.setsFreeTime(sfreeTime);
+        store.setsStartTime(sStartTime);
         store.setSFlushTime(new BigInteger("0"));//设置刷新置顶的次数为0
         Boolean flag = store.save();
         if(flag)

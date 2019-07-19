@@ -350,7 +350,6 @@ public class AControllerL {
     @RequestMapping("/showHandInDeposit")
     public BaseResponse showHandInDeposit()
     {
-
         JSONArray handInDeposit = aServiceL.showHandInDeposit();
         if(!handInDeposit.isEmpty())
         {

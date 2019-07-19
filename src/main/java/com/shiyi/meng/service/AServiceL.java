@@ -172,7 +172,6 @@ public class AServiceL {
             returnApply.put("sdApplyName",stopdeal.getSdApplyName());
             returnApply.put("sdApplyNum",stopdeal.getSdApplyNum());
             returnApply.put("sdApplyPhone",stopdeal.getSdApplyPhone());
-            returnApply.put("sdApplyPhone",stopdeal.getSdApplyPhone());
 
             returnApplyList.add(returnApply);
         }

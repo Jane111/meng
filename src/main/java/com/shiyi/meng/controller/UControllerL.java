@@ -7,6 +7,7 @@ import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.UServiceL;
 import com.shiyi.meng.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/user")
 public class UControllerL {

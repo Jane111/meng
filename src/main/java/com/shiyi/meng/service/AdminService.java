@@ -415,8 +415,9 @@ public class AdminService {
     }
 
     public JSONArray allSecondDB(int dbType) {
-        String sql="select * from devicebusiness where dbType=?  ";
+        String sql="select * from devicebusiness where dbType=? AND dbStatus=2";//返回审核通过的设备商
         List<Devicebusiness> devicebusinessList=Devicebusiness.dao.find(sql,dbType);
+        System.out.println(dbType);
         JSONArray array=new JSONArray();
         for (Devicebusiness devicebusiness:devicebusinessList){
             JSONObject object=packDBList(devicebusiness);

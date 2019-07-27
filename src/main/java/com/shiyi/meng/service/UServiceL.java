@@ -66,7 +66,7 @@ public class UServiceL {
         JSONArray showStoreList = new JSONArray();
         List<Store> storeList = Store.dao.find("select * from store " +
                 "where sStatus=1 AND sCity=? " +
-                "order by sModifyTime " +
+                "order by sModifyTime desc " +
                 "limit "+pageSize+" offset "+(pageIndex-1)*pageSize,uCity);//店铺状态sStatus为1（审核通过）
         //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
         for(Store store:storeList)
@@ -162,8 +162,16 @@ public class UServiceL {
                 "where ssUser=? AND ssIsContract=1",uId);
         for(Signstore signstore:signstoreList)
         {
-            Store store = Store.dao.findById(signstore.getSsStore());//得到用户关注的店铺信息
+            BigInteger sId=signstore.getSsStore();
+            Store store = Store.dao.findById(sId);//得到用户关注的店铺信息
             packStore(store).put("signStoreId",signstore.getSsId());//得到签约的id，以便之后状态的改变
+
+            //找到对应的合同 ，查看合同的状态|根据uID，和sId
+            System.out.println(uId);
+            System.out.println(sId);
+            Usercontract usercontract = Usercontract.dao.findFirst("select * from usercontract" +
+                    " where ucOwner=? AND ucStore=?",uId,sId);
+            packStore(store).put("ucStatus",usercontract.getUcStatus());//用户与该店铺合同的状态
             signStoreList.add(packStore(store));
         }
         return signStoreList;
@@ -213,9 +221,9 @@ public class UServiceL {
     {
         JSONArray finalStoreList = new JSONArray();
         List<Store> storeList = new ArrayList<>();
-        storeList.addAll(Store.dao.find("select * from store where sSpot=?",clId));
-        storeList.addAll(Store.dao.find("select * from store where sBusiness=?",clId));
-        storeList.addAll(Store.dao.find("select * from store where sSchool=?",clId));
+        storeList.addAll(Store.dao.find("select * from store where sSpot=? AND sStatus=1",clId));
+        storeList.addAll(Store.dao.find("select * from store where sBusiness=? AND sStatus=1",clId));
+        storeList.addAll(Store.dao.find("select * from store where sSchool=? AND sStatus=1",clId));
         for(Store store:storeList)
         {
             finalStoreList.add(packStore(store));

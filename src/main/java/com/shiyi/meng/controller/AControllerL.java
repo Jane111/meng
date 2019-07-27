@@ -153,13 +153,14 @@ public class AControllerL {
     //审核异常店铺；如果审核成功，则将该店铺状态设置为3异常店铺；否则不对其他表进行操作
     @RequestMapping("/checkAbStore")
     public BaseResponse checkAbStore(
+            @RequestParam("asId") BigInteger asId,
             @RequestParam("sId") BigInteger sId,
             @RequestParam("asStatus") Integer asStatus
     )
     {
         //首先修改异常审核表中的状态
         Abnormalstore abnormalstore = new Abnormalstore();
-        abnormalstore.setAsStore(sId);
+        abnormalstore.setAsId(asId);
         abnormalstore.setAsStatus(asStatus);
         boolean flag = abnormalstore.update();
         if(asStatus==1)//审核成功
@@ -167,6 +168,7 @@ public class AControllerL {
             Store store = new Store();
             store.setSId(sId);
             store.setSStatus(3);//设置为异常店铺状态
+            store.update();
         }
         if(flag)
         {
@@ -310,7 +312,23 @@ public class AControllerL {
 
         try {
             aServiceL.mToPOrder(new BigDecimal(Constant.RETURNMONEYTOBUY),openIdBuyer);//向找店方返98元
-            aServiceL.mToPOrder(money.subtract(new BigDecimal(Constant.RETURNMONEYTOBUY)),openIdSaler);//向转店方返（押金-968元）
+            aServiceL.mToPOrder(money.subtract(new BigDecimal(Constant.RETURNMONEYTOSALEREDUCE)),openIdSaler);//向转店方返（押金-968元）
+
+            //在transfermoney表中记录返款信息-找店方
+            Transfermoney newTransfermoney = new Transfermoney();
+            newTransfermoney.setTmTo(userId);//tmto 为userId
+            newTransfermoney.setTmFrom(new BigInteger("0"));//tmfrom 为0，表示平台
+            newTransfermoney.setTmStore(storeId);
+            newTransfermoney.setTmMoney(new Float(Constant.RETURNMONEYTOBUY));
+            newTransfermoney.save();
+
+            //在transfermoney表中记录返款信息-转店方
+            Transfermoney newTransfermoney2 = new Transfermoney();
+            newTransfermoney2.setTmTo(Store.dao.findById(storeId).getSUId());//tmto 为userId
+            newTransfermoney2.setTmFrom(new BigInteger("0"));//tmfrom 为0，表示平台
+            newTransfermoney2.setTmStore(storeId);
+            newTransfermoney2.setTmMoney(new Float(Constant.RETURNMONEYTOSALEREDUCE));
+            newTransfermoney2.save();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -336,6 +354,10 @@ public class AControllerL {
         signstore.setSsId(ssId);
         signstore.setSsStatus(4);//拒绝返款申请
         boolean flag = signstore.update();
+        //将店铺状态改为“上架”
+        Store store=Store.dao.findById(signstore.getSsStore());
+        store.setSStatus(1);
+        store.update();
         if(flag)
         {
             br.setResult(ResultCodeEnum.SUCCESS);
@@ -432,6 +454,14 @@ public class AControllerL {
                 "where tmFrom=? AND tmStore=?",userId,storeId);//押金转账记录
         BigDecimal money = new BigDecimal(transfermoney.getTmMoney());//获得押金金额
 
+        //在transfermoney表中记录退款信息
+        Transfermoney newTransfermoney = new Transfermoney();
+        newTransfermoney.setTmTo(userId);//tmto 为userId
+        newTransfermoney.setTmFrom(new BigInteger("0"));//tmfrom 为0，表示平台
+        newTransfermoney.setTmStore(storeId);
+        newTransfermoney.setTmMoney(transfermoney.getTmMoney());
+        newTransfermoney.save();
+
         try {
             aServiceL.mToPOrder(money,openId);
         } catch (Exception e) {
@@ -500,9 +530,9 @@ public class AControllerL {
             br.setResult(ResultCodeEnum.SUCCESS);
         }else
         {
+            br.setData(null);
             br.setResult(ResultCodeEnum.UPDATE_ERROR);
         }
-        br.setData(null);
         return br;
     }
 
@@ -527,12 +557,62 @@ public class AControllerL {
         return br;
     }
 
+    //待审核合同列表
+    @RequestMapping("/showUncheckedContractList")
+    public BaseResponse showUncheckedContractList()
+    {
+        JSONArray uncheckedContractList =aServiceL.showUncheckedContractList();
+        if(uncheckedContractList.isEmpty())
+        {
+            br.setData(null);
+        }else
+        {
+            br.setData(uncheckedContractList);
+        }
+        br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
+    //审核合同-1不通过|2通过;通过不进行任何操作，不通过的话将店铺的状态改为1-通过申请
+    @RequestMapping("/checkContract")
+    public BaseResponse checkContract(
+            @RequestParam("ucId") BigInteger ucId,
+            @RequestParam("ucStatus") Integer ucStatus
+    )
+    {
+        Usercontract usercontract = Usercontract.dao.findById(ucId);
+        usercontract.setUcStatus(ucStatus);
+        Boolean flag = usercontract.update();//更新合同的状态
 
-
-
-
-
-
-
+        if(ucStatus==1)//如果该店铺的合同没有审核通过的情况
+        {
+            Store store = Store.dao.findById(usercontract.getUcStore());//得到对应的店铺
+            store.setSStatus(1);//将店铺状态修改为通过申请
+            store.update();
+        }
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //待审核合同列表
+    @RequestMapping("/showCheckedContractList")
+    public BaseResponse showCheckedContractList()
+    {
+        JSONArray uncheckedContractList =aServiceL.showCheckedContractList();
+        if(uncheckedContractList.isEmpty())
+        {
+            br.setData(null);
+        }else
+        {
+            br.setData(uncheckedContractList);
+        }
+        br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
 
 }

@@ -374,6 +374,23 @@ public class AControllerZ {
         return baseResponse;
     }
 
+    //未审核举报设备详情
+    @RequestMapping("/checkedReportDeviceInfo")
+    public BaseResponse checkedReportDeviceInfo(
+            @RequestParam("rdId") BigInteger rdId
+    ){
+        BaseResponse baseResponse=new BaseResponse();
+        JSONObject object=adminService.waitCheckDeviceInfo(rdId);
+        if (object==null||object.isEmpty()){
+            baseResponse.setResult(ResultCodeEnum.FIND_FAILURE);//20004
+        }
+        else {
+            baseResponse.setResult(ResultCodeEnum.SUCCESS);
+            baseResponse.setData(object);
+        }
+        return baseResponse;
+    }
+
     //待审核举报设备详情
     @RequestMapping("/waitCheckDeviceInfo")
     public BaseResponse waitCheckDeviceInfo(

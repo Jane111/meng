@@ -107,6 +107,11 @@ public class AServiceL {
         String photo = abnormalstore.getAsPhoto();
         String[] photoList = photo.split("###");
         abStore.put("asPhoto",photoList);//图片
+        //异常店铺详细信息
+        Store store = Store.dao.findById(abnormalstore.getAsStore());
+        abStore.put("sName",store.getSName());//店铺名称
+        abStore.put("sType",store.getSType());//店铺类型
+        abStore.put("sLoc",store.getSLoc());//店铺位置
         return abStore;
     }
 
@@ -247,7 +252,48 @@ public class AServiceL {
         String xml = PaymentKit.toXml(reqParams);
         String restxml = HttpUtils.posts("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", xml);
         System.out.println(restxml);
+    }
 
+    //待审核合同列表
+    public JSONArray showUncheckedContractList()
+    {
+        JSONArray returnData = new JSONArray();
+        List<Usercontract> uncheckedContractList = Usercontract.dao.find("select * from usercontract " +
+                "where ucstatus=0");
+        for(Usercontract usercontract:uncheckedContractList)
+        {
+            JSONObject contractDetail = new JSONObject();
+            contractDetail.put("ucId",usercontract.getUcId());//合同Id
+            contractDetail.put("ucIdUrl",usercontract.getUcIdUrl());
+            contractDetail.put("ucBusinessUrl",usercontract.getUcBusinessUrl());
+            contractDetail.put("ucContractUrl",usercontract.getUcContractUrl());
+            Store store = Store.dao.findById(usercontract.getUcStore());
+            contractDetail.put("sName",store.getSConName());//店铺负责人姓名
+            contractDetail.put("sPhone",store.getSPhone());//店铺负责人联系电话
+            returnData.add(contractDetail);
+        }
+        return returnData;
+    }
 
+    //待审核合同列表
+    public JSONArray showCheckedContractList()
+    {
+        JSONArray returnData = new JSONArray();
+        List<Usercontract> uncheckedContractList = Usercontract.dao.find("select * from usercontract " +
+                "where ucstatus!=0");
+        for(Usercontract usercontract:uncheckedContractList)
+        {
+            JSONObject contractDetail = new JSONObject();
+            contractDetail.put("ucId",usercontract.getUcId());//合同Id
+            contractDetail.put("ucStatus",usercontract.getUcStatus());//合同status
+            contractDetail.put("ucIdUrl",usercontract.getUcIdUrl());
+            contractDetail.put("ucBusinessUrl",usercontract.getUcBusinessUrl());
+            contractDetail.put("ucContractUrl",usercontract.getUcContractUrl());
+            Store store = Store.dao.findById(usercontract.getUcStore());
+            contractDetail.put("sName",store.getSConName());//店铺负责人姓名
+            contractDetail.put("sPhone",store.getSPhone());//店铺负责人联系电话
+            returnData.add(contractDetail);
+        }
+        return returnData;
     }
 }

@@ -2,9 +2,7 @@ package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.shiyi.meng.model.Device;
-import com.shiyi.meng.model.Devicebusiness;
-import com.shiyi.meng.model.Reportdevice;
+import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.service.DeviceServiceZ;
 import com.shiyi.meng.util.BaseResponse;
@@ -945,6 +943,29 @@ public class DControllerZ {
         }
         return baseResponse;
     }
-
+    //记录用户上交设备押金的记录
+    @RequestMapping("/addDevicePayOrder")
+    public BaseResponse addDevicePayOrder(
+            @RequestParam("uId") Long uId,
+            @RequestParam("dId") BigInteger dId
+//            @RequestParam("money") Float money
+    ){
+        BaseResponse baseResponse=new BaseResponse();
+        Bill bill = new Bill();
+        bill.setBBuyer(uId);
+        bill.setBDevice(dId);
+        Device device = Device.dao.findById(dId);//根据设备Id得到对应的设备
+        bill.setBSaler(device.getDOwner());//卖出者
+        boolean flag=bill.save();
+        if(flag)
+        {
+            baseResponse.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            baseResponse.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        baseResponse.setData(null);
+        return baseResponse;
+    }
 
 }

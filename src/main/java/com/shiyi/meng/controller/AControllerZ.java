@@ -2,7 +2,10 @@ package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shiyi.meng.model.Abnormalstore;
+import com.shiyi.meng.model.Accesscode;
 import com.shiyi.meng.model.Admin;
+import com.shiyi.meng.model.User;
 import com.shiyi.meng.service.AdminService;
 import com.shiyi.meng.util.BaseResponse;
 import com.shiyi.meng.util.Constant;
@@ -421,6 +424,7 @@ public class AControllerZ {
         else {
             baseResponse.setResult(ResultCodeEnum.UPDATE_FAILURE);//20005
         }
+        adminService.checkDeviceTemplate(rdId,operate);
         return baseResponse;
     }
 
@@ -538,4 +542,5 @@ public class AControllerZ {
         }
         return baseResponse;
     }
+
 }

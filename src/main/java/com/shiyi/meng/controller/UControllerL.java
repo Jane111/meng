@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicEditorPaneUI;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 @CrossOrigin
 @RestController
@@ -175,6 +175,7 @@ public class UControllerL {
         store.setSLoc(sLoc);
         store.setSLat(sLat);
         store.setSLng(sLng);
+        System.out.println(sLng);
         store.setSCity(sCity);
         store.setSUserWriteLoc(sUserWriteLoc);
         store.setSConnectType(sConnectType);
@@ -426,7 +427,8 @@ public class UControllerL {
             @RequestParam("asPhone") String asPhone,
             @RequestParam("asReason") String asReason,
             @RequestParam("asPhoto") String asPhoto,
-            @RequestParam("asType") Integer asType
+            @RequestParam("asType") Integer asType,
+            @RequestParam("formId") String formId
     )
     {
         Abnormalstore abnormalstore = new Abnormalstore();
@@ -438,6 +440,7 @@ public class UControllerL {
         abnormalstore.setAsPhoto(asPhoto);
         abnormalstore.setAsType(asType);
         abnormalstore.setAsStatus(0);//状态为未审核
+        abnormalstore.setAsFormId(formId);//设置formId
         boolean flag = abnormalstore.save();
         if(flag)
         {
@@ -838,7 +841,8 @@ public class UControllerL {
             @RequestParam("sdPhoto") String sdPhoto,
             @RequestParam("sdApplyName") String sdApplyName,
             @RequestParam("sdApplyNum") String sdApplyNum,
-            @RequestParam("sdApplyPhone") String sdApplyPhone
+            @RequestParam("sdApplyPhone") String sdApplyPhone,
+            @RequestParam("formId") String formId
     )
     {
         Stopdeal stopdeal = new Stopdeal();
@@ -849,6 +853,7 @@ public class UControllerL {
         stopdeal.setSdApplyName(sdApplyName);
         stopdeal.setSdApplyNum(sdApplyNum);
         stopdeal.setSdApplyPhone(sdApplyPhone);
+        stopdeal.setSdFormId(formId);
         boolean flag = stopdeal.save();
         JSONObject returnData = new JSONObject();
         returnData.put("sdId",stopdeal.getSdId());
@@ -927,7 +932,9 @@ public class UControllerL {
     public BaseResponse addPayOrder(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("sId") BigInteger sId,
-            @RequestParam("money") Float money
+            @RequestParam("money") Float money,
+            @RequestParam("ssUserPhone") String ssUserPhone,
+            @RequestParam("preypay_id") String preypay_id
     ){
         Transfermoney transfermoney = new Transfermoney();
         transfermoney.setTmFrom(uId);//tmfrom 为uId
@@ -947,7 +954,12 @@ public class UControllerL {
         signstore.setSsStore(sId);
         signstore.setSsIsMoney(1);//该签约店铺上交押金
         signstore.setSsStatus(6);//设置为正在交易的状态
+        signstore.setSsUserPhone(ssUserPhone);//购买人联系方式
+        signstore.setSsPrepayId(preypay_id);//存储对应的prepay_id
         signstore.save();
+
+        //发送对应的消息模板
+        uServiceL.payDepositTemplate(uId,money,preypay_id);
 
         if(flag)
         {
@@ -1014,10 +1026,10 @@ public class UControllerL {
         boolean flag = signstore.update();
         if(flag)
         {
-            br.setData(ResultCodeEnum.SUCCESS);//修改状态成功
+            br.setResult(ResultCodeEnum.SUCCESS);//修改状态成功
         }else
         {
-            br.setData(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
         }
         br.setData(null);
         return br;
@@ -1032,10 +1044,10 @@ public class UControllerL {
         boolean flag = uServiceL.addTuiApply(ssId,sdId);
         if(flag)
         {
-            br.setData(ResultCodeEnum.SUCCESS);//修改状态成功
+            br.setResult(ResultCodeEnum.SUCCESS);//修改状态成功
         }else
         {
-            br.setData(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);//修改状态失败
         }
         br.setData(null);
         return br;
@@ -1066,5 +1078,118 @@ public class UControllerL {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //查看附近几千米的店铺
+    @RequestMapping("/showNearStoreList")
+    public BaseResponse showNearStoreList(
+            @RequestParam("longitude") double longitude,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("distance") int distance
+    )
+    {
+        JSONArray storeList = uServiceL.findNearStoreList(latitude,longitude,distance);
+        if(storeList.isEmpty())
+        {
+            br.setResult(ResultCodeEnum.FIND_FAILURE);
+        }else
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+            br.setData(storeList);
+        }
+        return br;
+    }
+    //发送模板消息
+    @RequestMapping("/sendTemplageMessage")
+    public BaseResponse sendTemplageMessage(String touser,String template_id,String form_id) throws Exception {
+        String keyword1="11111";
+        String keyword2="22222";
+        String keyword3="33333";
+        String keyword4="44444";
+        String keyword5="55555";
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+        /*
+        调用发送模板消息API
+         */
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+//        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
+        System.out.println(xmlResult);
+        br.setResult(ResultCodeEnum.SUCCESS);
+        br.setData(xmlResult);
+        return br;
+    }
+
+    /*
+    *
+    * 模板消息
+    * */
+    //申请入驻
+    @RequestMapping("/applyIn")
+    public void applyIn(
+            @RequestParam("keyword1") String keyword1,
+            @RequestParam("touser") String touser,
+            @RequestParam("form_id") String form_id)
+    {
+        String keyword2="等待审核";
+        String keyword3="1-3日完成审核";
+        String template_id="s4fvfyZ2vG5uMuEsfmlri8sYLzXE7ZLs1LaEpacGHt4";//入驻申请通知
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //置顶店铺成功模板消息
+    @RequestMapping("/upStoreTemplate")
+    public void upStoreTemplate(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("sId") BigInteger sId,
+            @RequestParam("form_id") String form_id)
+    {
+        Store store = Store.dao.findById(sId);
+        User user = User.dao.findById(uId);
+        String keyword1="置顶成功";//置顶状态
+        String keyword2=store.getSModifyTime()+"";//置顶时间
+        String keyword3=store.getSName();//置顶内容
+        String keyword4=user.getUWeiXinName();//置顶人
+        String keyword5="您已经成功置顶您的店铺";//置顶详情
+        String touser=user.getUCOpenId();
+        String template_id="g1v_sueP6tYISez-8U8VtCJ-DdwpFU8DnPfinfC01vw";//置顶成功template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //新客户访问提醒模板消息
+    @RequestMapping("/newCoustmerStoreTemplate")
+    public void newCoustmerStoreTemplate(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("sId") BigInteger sId,
+            @RequestParam("form_id") String form_id)
+    {
+        Store store = Store.dao.findById(sId);
+        User user = User.dao.findById(uId);//访问者
+        String keyword1=store.getSName();//访问项目
+        String keyword2=user.getUWeiXinName();//昵称
+
+        Date t = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String keyword3=df.format(t);//访问时间
+
+        String keyword4="请保持手机畅通，并时刻关注平台动态。";//温馨提示
+        String touser=User.dao.findById(store.getSUId()).getUCOpenId();//通知店铺的主人
+        String template_id="9uZ_e4H3rUpf0cDFE84w8kmMKYhbbXtI1l56X0itTJ0";//新客户访问提醒template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
+        System.out.println(reqParams);
     }
 }

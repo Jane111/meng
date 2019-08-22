@@ -73,6 +73,14 @@ public abstract class BaseStopdeal<M extends BaseStopdeal<M>> extends Model<M> i
 		return get("sdApplyPhone");
 	}
 
+	public void setSdFormId(String sdFormId) {
+		set("sdFormId", sdFormId);
+	}
+
+	public String getSdFormId() {
+		return get("sdFormId");
+	}
+
 	public void setSdCreateTime(java.util.Date sdCreateTime) {
 		set("sdCreateTime", sdCreateTime);
 	}

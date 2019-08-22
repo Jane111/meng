@@ -97,7 +97,6 @@ public class HttpKit {
 
     public static String post(String url, Map<String, String> queryParas, String data, Map<String, String> headers) {
         HttpURLConnection conn = null;
-
         String var6;
         try {
             conn = getHttpConnection(buildUrlWithQueryString(url, queryParas), "POST", headers);
@@ -116,6 +115,7 @@ public class HttpKit {
         }
         return var6;
     }
+
 
     public static String post(String url, Map<String, String> queryParas, String data) {
         return post(url, queryParas, data, (Map)null);
@@ -191,6 +191,7 @@ public class HttpKit {
 
             return sb.toString();
         } else {
+            System.out.println(url);
             return url;
         }
     }

@@ -497,4 +497,30 @@ public class AdminService {
         return usercontract.update();
     }
 
+    //审核异常设备发送模板消息
+    public void checkDeviceTemplate(BigInteger rdId,int operate)
+    {
+        Reportdevice reportdevice = Reportdevice.dao.findById(rdId);
+        String touser= User.dao.findById(reportdevice.getRdReporter()).getUCOpenId();
+        String form_id=reportdevice.getRdFormId();//formId
+        String keyword1="举报异常设备";//申诉内容
+        String keyword2=reportdevice.getRdDcpt();//申诉原因
+        String keyword3=reportdevice.getRdName();//申诉人
+        String keyword4=reportdevice.getRdCreateTime()+"";//申诉时间
+        String keyword5=null;
+        if(operate==1)
+        {
+            keyword5="您举报设备的理由不够充分，已被驳回";//处理意见
+        }else if(operate==2)
+        {
+            keyword5="您举报的设备被认定为异常设备";//处理意见
+        }
+        String template_id="mC3KB5OpSgaeDm8sFxBbJXg9P7kaQ0G9jOVgeHZ4Fiw";//申诉处理模板消息
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+    }
 }

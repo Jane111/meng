@@ -81,6 +81,14 @@ public abstract class BaseAbnormalstore<M extends BaseAbnormalstore<M>> extends 
 		return get("asStatus");
 	}
 
+	public void setAsFormId(String asFormId) {
+		set("asFormId", asFormId);
+	}
+
+	public String getAsFormId() {
+		return get("asFormId");
+	}
+
 	public void setAsCreateTime(java.util.Date asCreateTime) {
 		set("asCreateTime", asCreateTime);
 	}

@@ -19,6 +19,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TreeMap;
 
 @RestController
@@ -606,7 +608,8 @@ public class DControllerZ {
             @RequestParam("rdDcpt") String rdDcpt,
             @RequestParam("rdImg") String rdImg,
             @RequestParam("rdName") String rdName,
-            @RequestParam("rdPhone") String rdPhone
+            @RequestParam("rdPhone") String rdPhone,
+            @RequestParam("formId") String formId
     ){
         BaseResponse response=new BaseResponse();
         Reportdevice reportdevice=new Reportdevice();
@@ -618,6 +621,7 @@ public class DControllerZ {
         reportdevice.setRdName(rdName);
         reportdevice.setRdPhone(rdPhone);
         reportdevice.setRdStatus(0);//待审核
+        reportdevice.setRdFormId(formId);
         if (deviceService.saveReport(reportdevice)){
             response.setResult(ResultCodeEnum.SUCCESS);
         }
@@ -967,5 +971,79 @@ public class DControllerZ {
         baseResponse.setData(null);
         return baseResponse;
     }
+    /*
+    * 模板消息
+    * */
+    //置顶设备成功模板消息
+    @RequestMapping("/upDeviceTemplate")
+    public void upDeviceTemplate(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("dId") BigInteger dId,
+            @RequestParam("form_id") String form_id)
+    {
+        Device device = Device.dao.findById(dId);
+        User user = User.dao.findById(uId);
+        String keyword1="置顶成功";//置顶状态
+        String keyword2=device.getDModifyTime()+"";//置顶时间
+        String keyword3=device.getDName();//置顶内容
+        String keyword4=user.getUWeiXinName();//置顶人
+        String keyword5="您已经成功置顶您的设备";//置顶详情
+        String touser=user.getUCOpenId();
+        String template_id="g1v_sueP6tYISez-8U8VtCJ-DdwpFU8DnPfinfC01vw";//置顶成功template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //新客户访问提醒模板消息
+    @RequestMapping("/newCoustmerDeviceTemplate")
+    public void newCoustmerDeviceTemplate(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("dId") BigInteger dId,
+            @RequestParam("form_id") String form_id)
+    {
+        Device device = Device.dao.findById(dId);
+        User user = User.dao.findById(uId);//访问者
+        String keyword1=device.getDName();//访问项目
+        String keyword2=user.getUWeiXinName();//昵称
 
+        Date t = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String keyword3=df.format(t);//访问时间
+
+        String keyword4="请保持手机畅通，并时刻关注平台动态。";//温馨提示
+        String touser=User.dao.findById(device.getDOwner()).getUCOpenId();//通知设备的主人
+        String template_id="9uZ_e4H3rUpf0cDFE84w8kmMKYhbbXtI1l56X0itTJ0";//新客户访问提醒template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //订单状态通知模板消息，在购买设备时使用
+    @RequestMapping("/buyDeviceTemplate")
+    public void buyDeviceTemplate(
+            @RequestParam("uId") BigInteger uId,
+            @RequestParam("dId") BigInteger dId,
+            @RequestParam("prepay_id") String prepay_id,
+            @RequestParam("prepay_money") String prepay_money)
+    {
+        Device device = Device.dao.findById(dId);
+        User user = User.dao.findById(uId);//访问者
+        String keyword1=device.getDName();//商品信息
+        String keyword2=prepay_money;//交易金额
+
+        String keyword3="正在发货";//订单状态
+
+        String keyword4=device.getDPhone();//设备商的联系电话
+        String touser=user.getUCOpenId();//通知访问设备的人
+        String template_id="9uZ_e4H3rUpf0cDFE84w8kmMKYhbbXtI1l56X0itTJ0";//新客户访问提醒template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+prepay_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
+        System.out.println(reqParams);
+    }
 }

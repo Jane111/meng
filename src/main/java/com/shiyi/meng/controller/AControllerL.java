@@ -170,6 +170,8 @@ public class AControllerL {
             store.setSStatus(3);//设置为异常店铺状态
             store.update();
         }
+        aServiceL.checkStoreTemplate(asId,asStatus);
+        //发送模板消息
         if(flag)
         {
             br.setResult(ResultCodeEnum.SUCCESS);
@@ -332,7 +334,8 @@ public class AControllerL {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        //发送模板消息
+        aServiceL.saleSuccessTemplate(ssId);
         boolean flag = signstore.update();
         if(flag)
         {
@@ -426,6 +429,9 @@ public class AControllerL {
     )
     {
         Stopdeal stopdeal = Stopdeal.dao.findById(sdId);
+
+        //发送模板消息
+        aServiceL.DealProblemTemplate(sdId);
         if(stopdeal!=null)
         {
             br.setData(stopdeal);
@@ -467,7 +473,8 @@ public class AControllerL {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        //发送模板消息
+        aServiceL.tuiInfoTemplate(ssId);
         boolean flag = signstore.update();
         if(flag)
         {
@@ -612,6 +619,102 @@ public class AControllerL {
             br.setData(uncheckedContractList);
         }
         br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
+
+    //查看轮播图信息
+    @RequestMapping("/showPhotoList")
+    public BaseResponse showPhotoList()
+    {
+        List<Photo> photoList = Photo.dao.find("select * from photo " +
+                "where pStatus=1");
+        JSONArray showPhotoList = new JSONArray();
+        for(Photo photo:photoList)
+        {
+            JSONObject showPhoto = new JSONObject();
+            showPhoto.put("pId",photo.getPId());
+            showPhoto.put("pUrl",photo.getPUrl());
+            showPhoto.put("pToId",photo.getPToId());
+            showPhoto.put("pType",photo.getPType());
+            showPhotoList.add(showPhoto);
+        }
+        if(showPhotoList.isEmpty())
+        {
+            br.setData(null);
+        }else
+        {
+            br.setData(showPhotoList);
+        }
+        br.setResult(ResultCodeEnum.SUCCESS);
+        return br;
+    }
+    //修改轮播图信息
+    @RequestMapping("/updatePhotoList")
+    public BaseResponse updatePhotoList(
+            @RequestParam("pId") BigInteger pId,
+            @RequestParam("pUrl") String pUrl,
+            @RequestParam("pToId") String pToId,
+            @RequestParam("pType") Integer pType
+    )
+    {
+        Photo photo = new Photo();
+        photo.setPId(pId);
+        photo.setPUrl(pUrl);
+        photo.setPToId(pToId);
+        photo.setPType(pType);
+        boolean flag = photo.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.UPDATE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //删除轮播图信息
+    @RequestMapping("/deletePhotoList")
+    public BaseResponse deletePhotoList(
+            @RequestParam("pId") BigInteger pId
+    )
+    {
+        Photo photo = new Photo();
+        photo.setPId(pId);
+        photo.setPStatus(0);
+        boolean flag = photo.update();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.DELETE_ERROR);
+        }
+        br.setData(null);
+        return br;
+    }
+    //修改轮播图信息
+    @RequestMapping("/addPhotoList")
+    public BaseResponse addPhotoList(
+            @RequestParam("pUrl") String pUrl,
+            @RequestParam("pToId") String pToId,
+            @RequestParam("pType") Integer pType
+    )
+    {
+        Photo photo = new Photo();
+        photo.setPUrl(pUrl);
+        photo.setPToId(pToId);
+        photo.setPType(pType);
+        photo.setPStatus(1);//新添加的图片状态为1-正在使用
+        boolean flag = photo.save();
+        if(flag)
+        {
+            br.setResult(ResultCodeEnum.SUCCESS);
+        }else
+        {
+            br.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        br.setData(null);
         return br;
     }
 

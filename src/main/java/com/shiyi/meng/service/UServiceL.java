@@ -322,8 +322,6 @@ public class UServiceL {
         String packageSign = WXPayUtil.generateSignature(packageParams, Constant.KEY);
         packageParams.put("paySign", packageSign);
         return packageParams;
-
-
     }
 
 
@@ -333,5 +331,40 @@ public class UServiceL {
         signstore.setSsStatus(1);//交易失败提交退款
         signstore.setSsStopDeal(sdId);//连接到退款乱申请具体信息页面
         return signstore.update();
+    }
+
+    public JSONArray findNearStoreList(double latitude,double longitude,int distance) {
+        JSONArray showStoreList = new JSONArray();
+        String sql = "select * from store where (\n" +
+                "acos(\n" +
+                "sin(("+latitude+"*3.1415)/180) * sin((sLat*3.1415)/180) + \n" +
+                "cos(("+latitude+"*3.1415)/180) * cos((sLat*3.1415)/180) * cos(("+longitude+"*3.1415)/180 - (sLng*3.1415)/180)\n" +
+                ")*6370.996\n" +
+                ")<="+distance+";";
+        List<Store> storeList = Store.dao.find(sql);
+        //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
+        for(Store store:storeList)
+        {
+            showStoreList.add(packStore(store));
+        }
+        return showStoreList;
+    }
+
+    /*
+    * 消息模板
+    * */
+    //押金缴纳成功模板消息
+    public void payDepositTemplate(BigInteger uId,Float money,String preypay_id)
+    {
+        User user = User.dao.findById(uId);//访问者
+        String keyword1=money+"";//押金缴纳金额
+        String keyword2="已成功缴纳押金";//备注
+
+        String touser=user.getUCOpenId();//通知押金缴纳者
+        String template_id="9uZ_e4H3rUpf0cDFE84w8kmMKYhbbXtI1l56X0itTJ0";//押金缴纳成功template
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+preypay_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}}}";
+        System.out.println(reqParams);
     }
 }

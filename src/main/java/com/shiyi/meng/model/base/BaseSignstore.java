@@ -35,6 +35,14 @@ public abstract class BaseSignstore<M extends BaseSignstore<M>> extends Model<M>
 		return get("ssUser");
 	}
 
+    public void setSsUserPhone(String ssUserPhone) {
+        set("ssUserPhone", ssUserPhone);
+    }
+
+    public String getSsUserPhone() {
+        return get("ssUserPhone");
+    }
+
 	public void setSsStatus(Integer ssStatus) {
 		set("ssStatus", ssStatus);
 	}
@@ -59,13 +67,22 @@ public abstract class BaseSignstore<M extends BaseSignstore<M>> extends Model<M>
         return get("ssIsMoney");
     }
 
-    public void setSsStopDeal(BigInteger ssStopDeal) {
-        set("ssStopDeal", ssStopDeal);
-    }
+	public void setSsStopDeal(BigInteger ssStopDeal) {
+		set("ssStopDeal", ssStopDeal);
+	}
 
-    public BigInteger getSsStopDeal() {
-        return get("ssStopDeal");
-    }
+	public BigInteger getSsStopDeal() {
+		return get("ssStopDeal");
+	}
+
+
+	public void setSsPrepayId(String ssPrepayId) {
+		set("ssPrepayId", ssPrepayId);
+	}
+
+	public String getSsPrepayId() {
+		return get("ssPrepayId");
+	}
 
 	public void setSsCreateTime(java.util.Date ssCreateTime) {
 		set("ssCreateTime", ssCreateTime);

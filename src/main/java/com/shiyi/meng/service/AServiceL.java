@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.net.ssl.SSLContext;
 import java.io.File;
@@ -147,6 +148,8 @@ public class AServiceL {
             JSONObject returnApply = new JSONObject();
             //用户签约店铺的id
             returnApply.put("ssId",signstore.getSsId());
+            //购买者的手机号码
+            returnApply.put("ssUserPhone",signstore.getSsUserPhone());
             //用户微信名称
             returnApply.put("uWeiXinName",User.dao.findById(signstore.getSsUser()).getUWeiXinName());
             //店铺名称
@@ -165,6 +168,8 @@ public class AServiceL {
             JSONObject returnApply = new JSONObject();
             //用户签约店铺的id
             returnApply.put("ssId",signstore.getSsId());
+            //购买者的手机号码
+            returnApply.put("ssUserPhone",signstore.getSsUserPhone());
             //店铺名称
             returnApply.put("sName",Store.dao.findById(signstore.getSsStore()).getSName());
             //退款信息Id
@@ -295,5 +300,103 @@ public class AServiceL {
             returnData.add(contractDetail);
         }
         return returnData;
+    }
+    /*
+    * 模板消息
+    * */
+    //点击申诉详情时，触发发送模板消息
+    public void DealProblemTemplate(BigInteger sdId)
+    {
+        Stopdeal stopdeal = Stopdeal.dao.findById(sdId);
+        String touser=User.dao.findById(stopdeal.getSdUser()).getUCOpenId();
+        String form_id=stopdeal.getSdFormId();//formId
+        String keyword1="押金退还";//申诉内容
+        String keyword2=stopdeal.getSdProblem();//申诉原因
+        String keyword3=stopdeal.getSdApplyName();//申诉人
+        String keyword4=stopdeal.getSdCreateTime()+"";//申诉时间
+        String keyword5="现已受理您的终止交易申请";//处理意见
+        String template_id="mC3KB5OpSgaeDm8sFxBbJXg9P7kaQ0G9jOVgeHZ4Fiw";//申诉处理
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //审核异常店铺发送模板消息
+    public void checkStoreTemplate(BigInteger asId,Integer asStatus)
+    {
+        Abnormalstore abnormalstore = Abnormalstore.dao.findById(asId);
+        String touser=User.dao.findById(abnormalstore.getAsUser()).getUCOpenId();
+        String form_id=abnormalstore.getAsFormId();//formId
+        String keyword1="举报异常店铺";//申诉内容
+        String keyword2=abnormalstore.getAsReason();//申诉原因
+        String keyword3=abnormalstore.getAsContact();//申诉人
+        String keyword4=abnormalstore.getAsCreateTime()+"";//申诉时间
+        String keyword5=null;
+        if(asStatus==1)
+        {
+            keyword5="您举报的店铺被认定为异常店铺";//处理意见
+        }else if(asStatus==2)
+        {
+            keyword5="您举报店铺的理由不够充分，已被驳回";//处理意见
+        }
+        String template_id="mC3KB5OpSgaeDm8sFxBbJXg9P7kaQ0G9jOVgeHZ4Fiw";//申诉处理模板消息
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+form_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //交易成功提醒
+    public void saleSuccessTemplate(BigInteger ssId)
+    {
+        Signstore signstore = Signstore.dao.findById(ssId);
+        String touser=User.dao.findById(signstore.getSsUser()).getUCOpenId();
+        String prepay_id=signstore.getSsPrepayId();//formId
+        Store store = Store.dao.findById(signstore.getSsStore());
+        String keyword1=null;//交易类型
+        Integer column = store.getSColumn();
+        if(column.equals("1"))
+        {
+            keyword1="店铺出租";
+        }else if(column.equals("2"))
+        {
+            keyword1="店铺转让";
+        }else if(column.equals("3"))
+        {
+            keyword1="店铺出售";
+        }else if(column.equals("4"))
+        {
+            keyword1="仓库出租";
+        }
+        String keyword2=store.getSName();//商家名称
+        String keyword3="恭喜交易成功，二手设备、人员招聘更多服务等着你";//备注
+        String template_id="LgqaCXuKE6-pY9d_mkN1nZKjq3bVyrIynFGzB2m9sl0";//交易成功模板消息
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+prepay_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"}}}";
+        System.out.println(reqParams);
+    }
+    //退款成功提醒
+    public void tuiInfoTemplate(BigInteger ssId)
+    {
+        Signstore signstore = Signstore.dao.findById(ssId);
+        String touser=User.dao.findById(signstore.getSsUser()).getUCOpenId();
+        String prepay_id=signstore.getSsPrepayId();//formId
+        String keyword1=null;//退款金额
+        String keyword2="押金退款";//退款类型
+        String keyword3="退款成功";//退款状态
+        String keyword4="微信钱包";//退款方式
+        String keyword5="您的订单退款已成功受理，金额将原路返还到您的微信支付账户";//温馨提示
+        String template_id="51YN57tTGoV3oyjanmLef1LZyydRc042GcIB3KfvupI";//退款通知模板消息
+        String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
+        String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+prepay_id+"\"," +
+                "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
+                "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
+                "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
+        System.out.println(reqParams);
     }
 }

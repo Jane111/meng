@@ -90,6 +90,14 @@ public abstract class BaseReportdevice<M extends BaseReportdevice<M>> extends Mo
         return get("rdStatus");
     }
 
+    public void setRdFormId(String rdFormId) {
+        set("rdFormId", rdFormId);
+    }
+
+    public String getRdFormId() {
+        return get("rdFormId");
+    }
+
     public void setRdCreateTime(java.util.Date rdCreateTime) {
         set("rdCreateTime", rdCreateTime);
     }

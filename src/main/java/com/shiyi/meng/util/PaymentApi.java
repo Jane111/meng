@@ -1,5 +1,7 @@
 package com.shiyi.meng.util;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,20 @@ public class PaymentApi {
      */
     public static String pushOrder(Map<String, String> params) {
         return HttpKit.post(unifiedOrderUrl, PaymentKit.toXml(params));
+    }
+    /*
+    *消息模板
+    * */
+    private static String templageMessageUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=";
+    public static String templateMessage(String accesstoken,String params) {
+        return HttpKit.post(templageMessageUrl+accesstoken, params);
+    }
+    /*
+    *get Access_code
+    * */
+    private static String getAccessCodeUrl = "https://api.weixin.qq.com/cgi-bin/token";
+    public static String getAccessCode(Map<String, String> params) {
+        return HttpKit.get(getAccessCodeUrl, params);
     }
 
     // 文档地址：https://pay.weixin.qq.com/wiki/doc/api/tools/mch_pay.php?chapter=14_2

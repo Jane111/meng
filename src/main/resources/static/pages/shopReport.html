@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>萌系餐饮人</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="author" content="SuggeElson" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="application-name" content="sprFlat admin template" />
+        <link rel='stylesheet' type='text/css' 
+        <!--[if lt IE 9]>
+        <![endif]-->       
+        <link href="../assets/css/icons.css" rel="stylesheet" />
+        <link href="../assets/css/sprflat-theme/jquery.ui.all.css" rel="stylesheet" />
+        <link href="../assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="../assets/css/plugins.css" rel="stylesheet" />
+        <link href="../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/custom.css" rel="stylesheet" />
+        <link rel="icon" href="../assets/img/ico/test.ico" type=""> 
+        <meta name="msapplication-TileColor" content="#3399cc" />
+        <style>
+            th,td{
+                white-space:nowrap;
+            }
+            a:hover,a:focus{
+                text-decoration: none;
+            }  
+            .dataTables_wrapper .dataTables_info{
+                display: none;
+            }
+        </style>
+    </head>
+    
+    <body>
+    
+        <div class="header">
+            <header-component></header-component>
+        </div>
+
+        <div class="sidebar">
+            <sidebar-component></sidebar-component>
+        </div>
+   
+        <div id="content">           
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 heading">
+                        <h1 class="page-header" v-cloak><i class="st-uniE606"></i>审核举报店铺</h1>                       
+                    </div>                  
+                </div>
+                <div class="outlet">
+
+                    <!-- 选项卡 -->
+                    <div class="col-lg-6 col-md-6">
+                        <div class="tabs">
+                            <ul id="myTab" class="nav nav-tabs tabdrop">
+                                <li class="active" @click='changetabs(0)'>
+                                    <a href="#one" data-toggle="tab" autofocus="autofocus">未审核</a>
+                                </li>
+                                <li class="" @click='changetabs(1)'>
+                                    <a href="#two" data-toggle="tab">已通过</a>
+                                </li>
+                                <li class="" @click='changetabs(2)'>
+                                    <a href="#three" data-toggle="tab">已拒绝</a>
+                                </li>
+                                
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                                <div class="tab-pane fade active in" id="one">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="panel panel-default plain toggle panelClose panelRefresh">
+                                                <div class="panel-body" style="position: relative;">                                                                             
+                                                    <select class="form-control select2" style="z-index: 99;position: absolute;left: 20px;width: 200px;">
+                                                        <option value="0">全部</option>
+                                                        <option value="1">生意转让</option>
+                                                        <option value="2">店铺出租</option>
+                                                        <option value="3">店铺出售</option>
+                                                        <option value="4">仓库出租</option>
+                                                    </select>     
+                                                    <table class="table display" id="datatable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>举报者</th>
+                                                                <th>联系方式</th>
+                                                                <th>类型</th>
+                                                                <th>被举报店铺名称</th>
+                                                                <th>被举报店铺类型</th>
+                                                                <th>被举报店铺位置</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr class="gradeA" v-for='item in storeList' >                                                                 
+                                                                <td v-cloak>{{item.asContact}}</td>
+                                                                <td v-cloak>{{item.asPhone}}</td>
+                                                                <td v-cloak>{{item.asType}}</td>                                                                
+                                                                <td v-cloak>{{item.sName}}</td>  
+                                                                <td v-cloak>{{item.sColumn}}</td>            
+                                                                <td v-cloak>{{item.sLoc}}</td>                                                                                                                           
+                                                                <td>
+                                                                    <a  href="#" @click='gotoDetails(item.asId)'> 详情</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="two">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="panel panel-default plain toggle panelClose panelRefresh">
+                                                <div class="panel-body" style="position: relative;">                                                                                 
+                                                    <select class="form-control select2" style="z-index: 99;position: absolute;left: 20px;width: 200px;">
+                                                        <option value="0">全部</option>
+                                                        <option value="1">生意转让</option>
+                                                        <option value="2">店铺出租</option>
+                                                        <option value="3">店铺出售</option>
+                                                        <option value="4">仓库出租</option>
+                                                    </select>   
+                                                    <table class="table display" id="datatable1">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>举报者</th>
+                                                                <th>联系方式</th>
+                                                                <th>类型</th>
+                                                                <th>被举报店铺名称</th>
+                                                                <th>被举报店铺类型</th>
+                                                                <th>被举报店铺位置</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr class="gradeA" v-for='item in storeList' :key='item.id'> 
+                                                                <td v-cloak>{{item.asContact}}</td>
+                                                                <td v-cloak>{{item.asPhone}}</td>
+                                                                <td v-cloak>{{item.sType}}</td>                                                                
+                                                                <td v-cloak>{{item.sName}}</td>  
+                                                                <td v-cloak>{{item.sColumn}}</td>            
+                                                                <td v-cloak>{{item.sLoc}}</td>                                                                                                                           
+                                                                <td>
+                                                                    <a  href="#" @click='agreegoods(1,item.agiId)'>同意</a> <a href="#" @click='agreegoods(2,item.agiId)'>拒绝</a><a  href="#" @click='agreegoods(1,item.agiId)'> 详情</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="three">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="panel panel-default plain toggle panelClose panelRefresh">
+                                                <div class="panel-body" style="position: relative;">                                                                             
+                                                    <select class="form-control select2" style="z-index: 99;position: absolute;left: 20px;width: 200px;">                                                     
+                                                        <option value="0">全部</option>
+                                                        <option value="1">生意转让</option>
+                                                        <option value="2">店铺出租</option>
+                                                        <option value="3">店铺出售</option>
+                                                        <option value="4">仓库出租</option>
+                                                    </select>     
+                                                    <table class="table display" id="datatable2">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>举报者</th>
+                                                                <th>联系方式</th>
+                                                                <th>类型</th>
+                                                                <th>被举报店铺名称</th>
+                                                                <th>被举报店铺类型</th>
+                                                                <th>被举报店铺位置</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr class="gradeA" v-for='item in storeList' :key='item.id'> 
+                                                                <td v-cloak>{{item.asContact}}</td>
+                                                                <td v-cloak>{{item.asPhone}}</td>
+                                                                <td v-cloak>{{item.sType}}</td>                                                                
+                                                                <td v-cloak>{{item.sName}}</td>  
+                                                                <td v-cloak>{{item.sColumn}}</td>            
+                                                                <td v-cloak>{{item.sLoc}}</td>                                                                                                                           
+                                                                <td>
+                                                                    <a  href="#" @click='agreegoods(1,item.agiId)'>同意</a> <a href="#" @click='agreegoods(2,item.agiId)'>拒绝</a><a  href="#" @click='agreegoods(1,item.agiId)'> 详情</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!-- Javascripts -->    
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-2.1.1.min.js">\x3C/script>')
+        </script>
+        <script src="../assets/js/jquery-ui.js"></script>
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-ui-1.10.4.min.js">\x3C/script>')
+        </script>
+        <!-- Bootstrap plugins 个人中心 -->
+        <script src="../assets/js/bootstrap/bootstrap.js"></script>
+        <!-- cotent 导航 -->
+        <script src="../assets/js/jRespond.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.horizontal.min.js"></script>        
+        <script src="../assets/plugins/forms/icheck/jquery.icheck.js"></script>
+        <script src="../assets/plugins/forms/tags/jquery.tagsinput.min.js"></script>
+        <script src="../assets/plugins/forms/tinymce/tinymce.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTables.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTablesBS3.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/ZeroClipboard.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/TableTools.js"></script>
+        <script src="../assets/plugins/misc/highlight/highlight.pack.js"></script>
+        <script src="../assets/plugins/misc/countTo/jquery.countTo.js"></script>
+        <script src="../assets/js/jquery.sprFlat.js"></script>
+        <script src="../assets/js/app.js"></script>
+        <script src="../plugins/layer/layer.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-resource.js"></script>
+        <script src="../js/requestIP.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/shopReport.js"></script>
+    </body>
+</html>

@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.shiyi.meng.model.*;
 import com.shiyi.meng.service.AServiceL;
 import com.shiyi.meng.service.DeviceServiceZ;
-import com.shiyi.meng.util.BaseResponse;
-import com.shiyi.meng.util.Constant;
-import com.shiyi.meng.util.CosStsClient;
-import com.shiyi.meng.util.ResultCodeEnum;
+import com.shiyi.meng.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -976,7 +973,7 @@ public class DControllerZ {
     * */
     //置顶设备成功模板消息
     @RequestMapping("/upDeviceTemplate")
-    public void upDeviceTemplate(
+    public BaseResponse upDeviceTemplate(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("dId") BigInteger dId,
             @RequestParam("form_id") String form_id)
@@ -996,10 +993,15 @@ public class DControllerZ {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        BaseResponse baseResponse=new BaseResponse();
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        baseResponse.setData(xmlResult);
+        return baseResponse;
     }
     //新客户访问提醒模板消息
     @RequestMapping("/newCoustmerDeviceTemplate")
-    public void newCoustmerDeviceTemplate(
+    public BaseResponse newCoustmerDeviceTemplate(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("dId") BigInteger dId,
             @RequestParam("form_id") String form_id)
@@ -1021,10 +1023,15 @@ public class DControllerZ {
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
         System.out.println(reqParams);
+        BaseResponse baseResponse=new BaseResponse();
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        baseResponse.setData(xmlResult);
+        return baseResponse;
     }
     //订单状态通知模板消息，在购买设备时使用
     @RequestMapping("/buyDeviceTemplate")
-    public void buyDeviceTemplate(
+    public BaseResponse buyDeviceTemplate(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("dId") BigInteger dId,
             @RequestParam("prepay_id") String prepay_id,
@@ -1045,5 +1052,10 @@ public class DControllerZ {
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
         System.out.println(reqParams);
+        BaseResponse baseResponse=new BaseResponse();
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        baseResponse.setData(xmlResult);
+        return baseResponse;
     }
 }

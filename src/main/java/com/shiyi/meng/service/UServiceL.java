@@ -361,10 +361,12 @@ public class UServiceL {
         String keyword2="已成功缴纳押金";//备注
 
         String touser=user.getUCOpenId();//通知押金缴纳者
-        String template_id="9uZ_e4H3rUpf0cDFE84w8kmMKYhbbXtI1l56X0itTJ0";//押金缴纳成功template
+        String template_id="7LdwBG2ZpYSUGPaaV9ATBZMYclKHxYM1G3rcKuvOS-Q";//押金缴纳成功template
         String access_token = Accesscode.dao.findFirst("select acCode from accesscode ORDER BY acCreateTime DESC").getAcCode();
         String reqParams="{\"access_token\":\""+access_token+"\",\"touser\":\""+touser+"\",\"template_id\":\""+template_id+"\",\"form_id\":\""+preypay_id+"\"," +
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
 }

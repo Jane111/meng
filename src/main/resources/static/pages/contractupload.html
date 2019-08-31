@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>萌系餐饮人</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="author" content="SuggeElson" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="application-name" content="sprFlat admin template" />
+        <link rel='stylesheet' type='text/css' 
+        <!--[if lt IE 9]>
+        <![endif]-->       
+        <link href="../assets/css/icons.css" rel="stylesheet" />
+        <link href="../assets/css/sprflat-theme/jquery.ui.all.css" rel="stylesheet" />
+        <link href="../assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="../assets/css/plugins.css" rel="stylesheet" />
+        <link href="../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/custom.css" rel="stylesheet" />
+        <link rel="icon" href="../assets/img/ico/test.ico" type=""> 
+        <meta name="msapplication-TileColor" content="#3399cc" />
+    </head>
+    
+    <body>
+    
+        <div class="header">
+            <header-component></header-component>
+        </div>
+
+        <div class="sidebar">
+            <sidebar-component></sidebar-component>
+        </div>
+   
+        <div id="content">           
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 heading">
+                        <h1 class="page-header" v-cloak><i class="im-file-word"></i>上传合同模板</h1>                       
+                    </div>                  
+                </div>
+                <div class="outlet">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="panel panel-default  toggle panelRefresh">                                    
+                            <div class="panel-body">
+                                <div>   
+                                    <div v-for='(item,index) in ContractModelList'>
+                                        <div class="page-header" style=" margin-top:0px;">
+                                            <h5>合同模板{{index + 1}}</h5>
+                                        </div>                                 
+                                        <div class="well">
+                                            <textarea class="form-control" style="width:100%;" name="textarea"  id="textarea" rows="4" value=''>{{item.ctContent}}</textarea>
+                                            <div style="margin: 10px 0px 0px 10px;">
+                                                <button class="btn" @click = 'cancel()'>取消</button>
+                                                <button class="btn btn-danger"  @click = 'updatecm(item.ctId,item.ctContent)'>保存</button>                                                                                     
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                </div>                                   
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!-- Javascripts -->    
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-2.1.1.min.js">\x3C/script>')
+        </script>
+        <script src="../assets/js/jquery-ui.js"></script>
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-ui-1.10.4.min.js">\x3C/script>')
+        </script>
+        <!-- Bootstrap plugins 个人中心 -->
+        <script src="../assets/js/bootstrap/bootstrap.js"></script>
+        <!-- cotent 导航 -->
+        <script src="../assets/js/jRespond.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.horizontal.min.js"></script>        
+        <script src="../assets/plugins/forms/icheck/jquery.icheck.js"></script>
+        <script src="../assets/plugins/forms/tags/jquery.tagsinput.min.js"></script>
+        <script src="../assets/plugins/forms/tinymce/tinymce.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTables.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTablesBS3.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/ZeroClipboard.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/TableTools.js"></script>
+        <script src="../assets/plugins/misc/highlight/highlight.pack.js"></script>
+        <script src="../assets/plugins/misc/countTo/jquery.countTo.js"></script>
+        <script src="../assets/js/jquery.sprFlat.js"></script>
+        <script src="../assets/js/app.js"></script>
+        <script src="../plugins/layer/layer.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-resource.js"></script>
+        <script src="../js/requestIP.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/contactupload.js"></script>
+    </body>
+</html>

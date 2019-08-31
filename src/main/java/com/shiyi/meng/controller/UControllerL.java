@@ -103,8 +103,8 @@ public class UControllerL {
             @RequestParam("sWareHouse") Integer sWareHouse,//仓库所在层
             @RequestParam("sAera") Float sAera,//面积
             @RequestParam("sLoc") String sLoc,//店铺位置
-            @RequestParam("sLng") Float sLng,//店铺经度
-            @RequestParam("sLat") Float sLat,//店铺纬度
+            @RequestParam("sLng") String sLng,//店铺经度
+            @RequestParam("sLat") String sLat,//店铺纬度
             @RequestParam("sCity") String sCity,//店铺所在城市
             @RequestParam("sUserWriteLoc") String sUserWriteLoc,//用户填写的店铺位置
             @RequestParam("sConnectType") Integer sConnectType,//店铺另一种联系方式类别1微信2QQ3邮箱
@@ -132,7 +132,7 @@ public class UControllerL {
         for(Cityloc cityloc:citylocList)
         {
             //计算距离
-            double distance = getDistance(cityloc.getClLat(),cityloc.getClLng(),sLat,sLng);
+            double distance = getDistance(cityloc.getClLat(),cityloc.getClLng(),Float.parseFloat(sLat),Float.parseFloat(sLng));
             distanceList.put(distance,cityloc.getClId());
             Integer type = cityloc.getClType();//得到该poi的类型
             if(type==0)//景点
@@ -1117,9 +1117,8 @@ public class UControllerL {
         调用发送模板消息API
          */
         String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
-//        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
+
         System.out.println(xmlResult);
-        br.setResult(ResultCodeEnum.SUCCESS);
         br.setData(xmlResult);
         return br;
     }
@@ -1130,7 +1129,7 @@ public class UControllerL {
     * */
     //申请入驻
     @RequestMapping("/applyIn")
-    public void applyIn(
+    public BaseResponse applyIn(
             @RequestParam("keyword1") String keyword1,
             @RequestParam("touser") String touser,
             @RequestParam("form_id") String form_id)
@@ -1143,10 +1142,15 @@ public class UControllerL {
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
                 "\"keyword3\":{\"value\":\""+keyword3+"\"}}}";
         System.out.println(reqParams);
+
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        br.setData(xmlResult);
+        return br;
     }
     //置顶店铺成功模板消息
     @RequestMapping("/upStoreTemplate")
-    public void upStoreTemplate(
+    public BaseResponse upStoreTemplate(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("sId") BigInteger sId,
             @RequestParam("form_id") String form_id)
@@ -1166,10 +1170,14 @@ public class UControllerL {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        br.setData(xmlResult);
+        return br;
     }
     //新客户访问提醒模板消息
     @RequestMapping("/newCoustmerStoreTemplate")
-    public void newCoustmerStoreTemplate(
+    public BaseResponse newCoustmerStoreTemplate(
             @RequestParam("uId") BigInteger uId,
             @RequestParam("sId") BigInteger sId,
             @RequestParam("form_id") String form_id)
@@ -1191,5 +1199,9 @@ public class UControllerL {
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
+        br.setData(xmlResult);
+        return br;
     }
 }

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>设备详情</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="author" content="SuggeElson" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="application-name" content="sprFlat admin template" />
+        <link rel='stylesheet' type='text/css' 
+        <!--[if lt IE 9]>
+        <![endif]-->       
+        <link href="../assets/css/icons.css" rel="stylesheet" />
+        <link href="../assets/css/sprflat-theme/jquery.ui.all.css" rel="stylesheet" />
+        <link href="../assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="../assets/css/plugins.css" rel="stylesheet" />
+        <link href="../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/custom.css" rel="stylesheet" />
+        <link rel="icon" href="../assets/img/ico/test.ico" type=""> 
+        <meta name="msapplication-TileColor" content="#3399cc" />
+        <style>
+            .col-md-10{
+                padding-top: 7px;
+            }
+            .form-horizontal{
+                margin-bottom: 60px;
+            }
+        </style>
+    </head>
+    
+    <body>
+    
+        <div id="header">
+            <div class="container-fluid">
+                <div class="navbar">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="index.html">
+                            <span class="text-slogan" style="padding-left:20px;font-size: 22px">设备详情</span> 
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div id="content" style="margin: 0 100px;">
+
+            <div class="content-wrapper">
+                <div class="outlet">                
+                    <div class="row" style="margin-top: 40px;">
+                            <div class="col-lg-12">
+                                <div class="panel panel-default toggle">                                        
+                                    <div class="panel-body">
+
+                                        <div class="page-header" style="margin-top: -10px;">
+                                            <h4>联系人信息</h4>
+                                        </div>
+                                        <form class="form-horizontal" role="form">
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">联系人姓名</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dOwnerName}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">手机号码</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dPhone}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">联系方式</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dOtherConnect}}
+                                                </div>
+                                            </div>
+                                                                                                                        
+                                        </form>
+
+                                        <div class="page-header" style="margin-top: -10px;">
+                                            <h4>设备信息</h4>
+                                        </div>
+                                        <form class="form-horizontal" role="form">
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">设备描述</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dDcpt}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">设备照片</label>
+                                                <div class="col-lg-10 col-md-10">
+                                                    <div class="row">
+                                                        <div class="gallery">
+                                                            <div class="gallery-inner"  v-for='item in details.dPhoto' :key=''>
+                                                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 sea" data-my-order="1">
+                                                                    <a href="#" class="thumbnail">
+                                                                        <img v-bind:src="item" alt="image">
+                                                                    </a>
+                                                                    <div class="gallery-image-controls" style="left:100%">
+                                                                        <div class="action-btn">
+                                                                            <a class="gallery-image-open btn btn-primary btn-round tipB" title="Open image" :href="item"><i class="ec-search"></i></a>
+                                                                            <a class="gallery-image-download btn btn-primary btn-round tipB" title="Download" :href="item"><i class="st-download"></i></a>                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>    
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">具体位置</label>
+                                                <div class="col-lg-10 col-md-10">
+                                                    {{details.dLocation}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">设备名称</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dName}}
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">设备分类</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dType}}
+                                                </div>
+                                            </div>
+											 <div class="form-group" v-if="cleanDisplay">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">是否清洗</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dClean}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group" v-if="cleanDisplay">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">原价</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dOPrice}}
+                                                </div>
+                                            </div>   
+
+                                            <div class="form-group">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">售价</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dSPrice}}
+                                                </div>
+                                            </div>   
+
+                                            <div class="form-group" v-if="cleanDisplay">
+                                                <label class="col-lg-2 col-md-2 col-sm-12 control-label">是否包邮</label>
+                                                <div class="col-lg-10 col-md-10"  v-cloak>
+                                                    {{details.dPostage}}
+                                                </div>
+                                            </div>                     
+                                        </form>
+
+
+                                        <div class="page-header" style="margin-top: -10px;" v-if="checkDisplay">
+                                            <h4 v-cloak>审核</h4>
+                                        </div>
+										 <div style="margin: 40px 0px 20px 200px;" v-if="checkDisplay">
+                                            <button class="btn" @click='reducem()'>退回</button>
+                                            <input type="button" value="通过" class="btn btn-danger"  @click='agreem()'>                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Javascripts -->    
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-2.1.1.min.js">\x3C/script>')
+        </script>
+        <script src="../assets/js/jquery-ui.js"></script>
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-ui-1.10.4.min.js">\x3C/script>')
+        </script>
+        <!-- Bootstrap plugins 个人中心 -->
+        <script src="../assets/js/bootstrap/bootstrap.js"></script>
+        <!-- cotent 导航 -->
+        <script src="../assets/js/jRespond.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.horizontal.min.js"></script>           
+        <script src="../assets/plugins/core/quicksearch/jquery.quicksearch.js"></script>
+        <script src="../assets/plugins/charts/sparklines/jquery.sparkline.js"></script>
+        <script src="../assets/plugins/charts/pie-chart/jquery.easy-pie-chart.js"></script>     
+        <script src="../assets/plugins/forms/icheck/jquery.icheck.js"></script>
+        <script src="../assets/plugins/forms/tags/jquery.tagsinput.min.js"></script>
+        <script src="../assets/plugins/forms/tinymce/tinymce.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTables.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTablesBS3.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/ZeroClipboard.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/TableTools.js"></script>
+        <script src="../assets/plugins/misc/highlight/highlight.pack.js"></script>
+        <script src="../assets/plugins/misc/countTo/jquery.countTo.js"></script>
+        <script src="../assets/plugins/misc/gallery/jquery.magnific-popup.min.js"></script>
+        <script src="../assets/plugins/misc/mixitup/jquery.mixitup.min.js"></script>
+        <script src="../assets/js/jquery.sprFlat.js"></script>
+        <script src="../assets/js/app.js"></script>
+		<script src="../plugins/layer/layer.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-resource.js"></script>
+        <script src="../js/requestIP.js"></script>
+        <script src="../js/sdetailsDevice.js"></script>
+    </body>
+</html>

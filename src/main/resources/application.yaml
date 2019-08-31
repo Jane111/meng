@@ -1,5 +1,9 @@
 server:
   port: 8080
+  ssl:
+    key-store: 2570754_moxicanyin.cn.pfx
+    key-store-password: QpX7p149
+    key-store-type: PKCS12
 
 jfinal:
   debug: true

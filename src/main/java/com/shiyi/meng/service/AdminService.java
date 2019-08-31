@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Const;
 import com.shiyi.meng.model.*;
 import com.shiyi.meng.util.Constant;
+import com.shiyi.meng.util.PaymentApi;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -522,5 +523,7 @@ public class AdminService {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
 }

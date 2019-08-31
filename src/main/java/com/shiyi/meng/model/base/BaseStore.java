@@ -67,19 +67,19 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sLoc");
 	}
 
-	public void setSLng(Float sLng) {
+	public void setSLng(String sLng) {
 		set("sLng", sLng);
 	}
 
-	public Float getSLng() {
+	public String getSLng() {
 		return get("sLng");
 	}
 
-	public void setSLat(Float sLat) {
+	public void setSLat(String sLat) {
 		set("sLat", sLat);
 	}
 
-	public Float getSLat() {
+	public String getSLat() {
 		return get("sLat");
 	}
 

@@ -146,6 +146,7 @@ public class AServiceL {
         for(Signstore signstore:returnmoneyList)
         {
             JSONObject returnApply = new JSONObject();
+            Store store = Store.dao.findById(signstore.getSsStore());
             //用户签约店铺的id
             returnApply.put("ssId",signstore.getSsId());
             //购买者的手机号码
@@ -153,7 +154,9 @@ public class AServiceL {
             //用户微信名称
             returnApply.put("uWeiXinName",User.dao.findById(signstore.getSsUser()).getUWeiXinName());
             //店铺名称
-            returnApply.put("sName",Store.dao.findById(signstore.getSsStore()).getSName());
+            returnApply.put("sName",store.getSName());
+            //店铺所有者的电话号码
+            returnApply.put("storePhone",store.getSPhone());
             returnApplyList.add(returnApply);
         }
         return returnApplyList;
@@ -166,12 +169,15 @@ public class AServiceL {
         for(Signstore signstore:returnmoneyList)
         {
             JSONObject returnApply = new JSONObject();
+            Store store = Store.dao.findById(signstore.getSsStore());
             //用户签约店铺的id
             returnApply.put("ssId",signstore.getSsId());
             //购买者的手机号码
             returnApply.put("ssUserPhone",signstore.getSsUserPhone());
             //店铺名称
-            returnApply.put("sName",Store.dao.findById(signstore.getSsStore()).getSName());
+            returnApply.put("sName",store.getSName());
+            //店铺所有者的电话号码
+            returnApply.put("storePhone",store.getSPhone());
             //退款信息Id
             returnApply.put("sdId",signstore.getSsStopDeal());
 
@@ -322,6 +328,8 @@ public class AServiceL {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
     //审核异常店铺发送模板消息
     public void checkStoreTemplate(BigInteger asId,Integer asStatus)
@@ -348,6 +356,8 @@ public class AServiceL {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
     //交易成功提醒
     public void saleSuccessTemplate(BigInteger ssId)
@@ -358,16 +368,16 @@ public class AServiceL {
         Store store = Store.dao.findById(signstore.getSsStore());
         String keyword1=null;//交易类型
         Integer column = store.getSColumn();
-        if(column.equals("1"))
+        if(column.equals(1))
         {
             keyword1="店铺出租";
-        }else if(column.equals("2"))
+        }else if(column.equals(2))
         {
             keyword1="店铺转让";
-        }else if(column.equals("3"))
+        }else if(column.equals(3))
         {
             keyword1="店铺出售";
-        }else if(column.equals("4"))
+        }else if(column.equals(4))
         {
             keyword1="仓库出租";
         }
@@ -379,6 +389,8 @@ public class AServiceL {
                 "\"data\":{\"keyword1\":{\"value\":\""+keyword1+"\"},\"keyword2\":{\"value\":\""+keyword2+"\"}," +
                 "\"keyword3\":{\"value\":\""+keyword3+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
     //退款成功提醒
     public void tuiInfoTemplate(BigInteger ssId)
@@ -398,5 +410,7 @@ public class AServiceL {
                 "\"keyword3\":{\"value\":\""+keyword3+"\"},\"keyword4\":{\"value\":\""+keyword4+"\"}," +
                 "\"keyword5\":{\"value\":\""+keyword5+"\"}}}";
         System.out.println(reqParams);
+        String xmlResult = PaymentApi.templateMessage(access_token,reqParams);
+        System.out.println(xmlResult);
     }
 }

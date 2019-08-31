@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>萌系餐饮人</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="author" content="SuggeElson" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="application-name" content="sprFlat admin template" />
+        <link rel='stylesheet' type='text/css' 
+        <!--[if lt IE 9]>
+        <![endif]-->       
+        <link href="../assets/css/icons.css" rel="stylesheet" />
+        <link href="../assets/css/sprflat-theme/jquery.ui.all.css" rel="stylesheet" />
+        <link href="../assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="../assets/css/plugins.css" rel="stylesheet" />
+        <link href="../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/custom.css" rel="stylesheet" />
+        <link rel="icon" href="../assets/img/ico/test.ico" type=""> 
+        <meta name="msapplication-TileColor" content="#3399cc" />	
+        <style>
+            .tile-stats .tile-stats-contentbtn .tile-stats-text{
+                font-size: 18px;
+            }
+            .tile-stats .tile-stats-icon i{
+                font-size: 35px;
+            }
+            .tile-stats .tile-stats-contentbtn{
+                padding: 22px 0;
+            }
+            h4{
+                font-weight: 500;
+                font-size: 17px;
+            }
+        </style>
+    </head>
+    <body>
+          
+        <div class="header">
+            <header-component></header-component>
+        </div>
+
+        <div class="sidebar">
+            <sidebar-component></sidebar-component>
+        </div>
+
+        <div id="content">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 heading">
+                        <h1 class="page-header" v-cloak><i class="im-home"></i>首页</h1>
+                    </div>
+                </div>
+                <div class="outlet">
+
+                    <!-- 待处理 -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="page-header">
+                                <h4 v-cloak>待处理</h4>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-xs-12">
+                            <a href="shopAudit.html">
+                            <div class="tile-stats b brall mb25 pink-bg">
+                                <div class="tile-stats-content">
+                                    <div class="tile-stats-number color-white"  v-cloak>待审核发布店铺</div>
+                                    <div class="tile-stats-text color-white" v-cloak>{{num.unCheckReleaseStore}}</div>                                    
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-xs-12">
+                            <a href="shopReport.html">
+                            <div class="tile-stats b brall mb25 blue-bg">
+                                <div class="tile-stats-content">
+                                    <div class="tile-stats-number color-white" v-cloak>待审核举报店铺</div>
+                                    <div class="tile-stats-text color-white" v-cloak>{{num.unCheckAbnormalStore}}</div>                                    
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-xs-12">
+                            <a href="deviceAudit.html">
+                            <div class="tile-stats b brall mb25 red-bg">
+                                <div class="tile-stats-content">
+                                    <div class="tile-stats-number color-white"  v-cloak>待审核发布设备</div>
+                                    <div class="tile-stats-text color-white" v-cloak>{{num.unCheckAbnormalStore}}</div>                                   
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-xs-12">
+                            <a href="providerAudit.html">
+                            <div class="tile-stats b brall mb25 green-bg">
+                                <div class="tile-stats-content">
+                                    <div class="tile-stats-number color-white"  v-cloak>待审核设备商</div>
+                                    <div class="tile-stats-text color-white" v-cloak>{{num.unCheckDeviceBusiness}}</div>                                    
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-xs-12">
+                            <a href="deviceReport.html">
+                            <div class="tile-stats b brall mb25 yellow-bg">
+                                <div class="tile-stats-content">
+                                    <div class="tile-stats-number color-white"  v-cloak>待审核举报设备</div>
+                                    <div class="tile-stats-text color-white" v-cloak>{{num.unCheckReportDevice}}</div>                                   
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            </a>
+                        </div>
+                        
+                    </div>
+
+                    <!-- 快捷入口 -->
+                    <div class="row">
+
+                        <div class="col-lg-12">
+                            <div class="page-header">
+                                <h4 v-cloak>快捷入口</h4>
+                            </div>
+                        </div>
+                        <a href="contractupload.html">
+                            <div class="col-lg-2 col-sm-6 col-xs-12">
+                                <div class="tile-stats b brall mb25">
+                                    <div class="tile-stats-icon"><i class="fa-bell "></i>
+                                    </div>
+                                    <div class="tile-stats-contentbtn">
+                                        <div class="tile-stats-text" v-cloak>上传合同模板</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="cueword.html">
+                            <div class="col-lg-2 col-sm-6 col-xs-12">
+                                <div class="tile-stats b brall mb25">
+                                    <div class="tile-stats-icon"><i class="im-warning color-teal"></i>
+                                    </div>
+                                    <div class="tile-stats-contentbtn">
+                                        <div class="tile-stats-text" v-cloak>提示词管理</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="foundStore.html">
+                            <div class="col-lg-2  col-sm-6 col-xs-12">
+                                <div class="tile-stats b brall mb25">
+                                    <div class="tile-stats-icon"><i class="im-headphones color-green"></i>
+                                    </div>
+                                    <div class="tile-stats-contentbtn">
+                                        <div class="tile-stats-text" v-cloak>定制化找店</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="platform.html">
+                            <div class="col-lg-2  col-sm-6 col-xs-12">
+                                <div class="tile-stats b brall mb25">
+                                    <div class="tile-stats-icon"><i class="ec-screen color-blue"></i>
+                                    </div>
+                                    <div class="tile-stats-contentbtn">
+                                        <div class="tile-stats-text" v-cloak>平台设置</div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </a>                      
+                    </div>
+                    
+                                  
+                </div>
+            </div>
+        </div>
+
+        <!-- Javascripts -->    
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-2.1.1.min.js">\x3C/script>')
+        </script>
+        <script src="../assets/js/jquery-ui.js"></script>
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-ui-1.10.4.min.js">\x3C/script>')
+        </script>
+        <!-- Bootstrap plugins 个人中心 -->
+        <script src="../assets/js/bootstrap/bootstrap.js"></script>
+        <!-- cotent 导航 -->
+        <script src="../assets/plugins/charts/flot/jquery.flot.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.pie.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.resize.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.time.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.growraf.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.categories.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.stack.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.orderBars.js"></script>
+        <script src="../assets/plugins/charts/flot/jquery.flot.tooltip.min.js"></script>
+        <script src="../assets/plugins/charts/flot/date.js"></script>
+        <script src="../assets/plugins/charts/sparklines/jquery.sparkline.js"></script>
+        <script src="../assets/plugins/charts/pie-chart/jquery.easy-pie-chart.js"></script>
+        <script src="../assets/js/jRespond.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.horizontal.min.js"></script>        
+        <script src="../assets/plugins/forms/icheck/jquery.icheck.js"></script>
+        <script src="../assets/plugins/forms/tags/jquery.tagsinput.min.js"></script>
+        <script src="../assets/plugins/forms/tinymce/tinymce.min.js"></script>
+        <script src="../assets/plugins/misc/highlight/highlight.pack.js"></script>
+        <script src="../assets/plugins/misc/countTo/jquery.countTo.js"></script>
+        <script src="../assets/js/jquery.sprFlat.js"></script>
+        <script src="../assets/js/app.js"></script>
+        <script src='../plugins/layer/layer.js'></script>
+        <script src="../js/requestIP.js"></script>
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-resource.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/index.js"></script>
+        
+    </body>
+</html>

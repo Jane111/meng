@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>萌系餐饮人</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta name="author" content="SuggeElson" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="application-name" content="sprFlat admin template" />
+        <link rel='stylesheet' type='text/css' 
+        <!--[if lt IE 9]>
+        <![endif]-->       
+        <link href="../assets/css/icons.css" rel="stylesheet" />
+        <link href="../assets/css/sprflat-theme/jquery.ui.all.css" rel="stylesheet" />
+        <link href="../assets/css/bootstrap.css" rel="stylesheet" />
+        <link href="../assets/css/plugins.css" rel="stylesheet" />
+        <link href="../assets/css/main.css" rel="stylesheet" />
+        <link href="../assets/css/custom.css" rel="stylesheet" />
+        <link rel="icon" href="../assets/img/ico/test.ico" type=""> 
+        <meta name="msapplication-TileColor" content="#3399cc" />
+        <style>
+            a:hover,a:focus{
+                text-decoration: none;
+            }     
+
+            .onoffswitch{
+                display:block;
+            }
+
+            .dataTables_wrapper .dataTables_filter {
+                float: left;
+                text-align: left;
+            }
+
+            .table > tbody > tr > td{
+                vertical-align:inherit;
+            }
+        </style>
+    </head>
+    
+    <body>
+    
+        <div class="header">
+            <header-component></header-component>
+        </div>
+
+        <div class="sidebar">
+            <sidebar-component></sidebar-component>
+        </div>
+        
+        <div id="content">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 heading">
+                        <h1 class="page-header" v-cloak><i class="st-chart"></i>轮播图设置</h1>                                             
+                    </div>                   
+                </div>
+                <div class="outlet">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default plain toggle panelClose panelRefresh">
+                                <div class="panel-body" style="position: relative;">      
+                                                               
+                                   <input type="button" value=" 新建 " data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-danger" style="position: absolute;
+                                   z-index: 2;
+                                   right: 100px;
+                                   height: 34px;">                                                                        
+                                    
+                                    <table class="table display" id="datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>类别</th>
+                                                <th>图片链接</th>
+                                                <th>店铺id/设备id</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="gradeA" v-for='item in advertList' > 
+                                                <td v-cloak>
+                                                    <span v-if='item.pType == 0'>链接</span>
+                                                    <span v-if='item.pType == 1'>店铺</span>
+                                                    <span v-if='item.pType == 2'>广告</span>
+                                                </td>
+                                                <td v-cloak>{{item.pUrl}}</td>
+                                                <td v-cloak>{{item.pToId}}</td>                                               
+                                                <td ><a href="#"  v-on:click="getModel(item)" data-toggle="modal" data-target="#myModal2">编辑</a>  <a href="#" @click='deletePhotoList(item.pId)'>删除</a></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 编辑子账号 -->
+                    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">编辑设置</h4>
+                                </div>
+                                <div class="modal-body">
+                                        <form class="form-horizontal" role="form">
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">类型</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <select class="form-control select2" v-model='item.pType' >
+                                                            <option value="0">链接</option>
+                                                            <option value="1">店铺</option>
+                                                            <option value="2">设备</option>
+                                                        </select>                                                       
+                                                    </div>
+                                                </div>   
+
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">店铺id/设备id</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <input type="text" class="form-control" style="width: 100%;" placeholder="请输入店铺id/设备id" v-model="item.pToId">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">图片地址</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <input type="text" class="form-control" style="width: 100%;" placeholder="请输入图片地址" v-model='item.pUrl'>
+                                                    </div>
+                                                </div>       
+                                                                                            
+                                            </form>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button type="button" class="btn btn-primary" @click='updatePhotoList()'>保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- 新建子账号 -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">新建设置</h4>
+                                </div>
+                                <div class="modal-body">
+                                        <form class="form-horizontal" role="form">
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">类型</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <select class="form-control select2" v-model='newitem.pType'>
+                                                            <option value="0">链接</option>
+                                                            <option value="1">店铺</option>
+                                                            <option value="2">设备</option>
+                                                        </select>                                                       
+                                                    </div>
+                                                </div>   
+
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">店铺id/设备id</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <input type="text" class="form-control" style="width: 100%;" placeholder="请输入店铺id/设备id" v-model="newitem.pToId">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="col-lg-2 col-md-2 col-sm-12 control-label">图片地址</label>
+                                                    <div class="col-lg-10 col-md-10">
+                                                        <input type="text" class="form-control" style="width: 100%;" placeholder="请输入图片地址" v-model='newitem.pUrl'>
+                                                    </div>
+                                                </div>       
+                                                                                            
+                                            </form>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button type="button" class="btn btn-primary" @click='addPhotoList()'>保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>               
+            </div>
+
+        </div>
+
+       
+
+        <!-- Javascripts -->    
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-2.1.1.min.js">\x3C/script>')
+        </script>
+        <script src="../assets/js/jquery-ui.js"></script>
+        <script>
+        window.jQuery || document.write('<script src="../assets/js/libs/jquery-ui-1.10.4.min.js">\x3C/script>')
+        </script>
+        <!-- Bootstrap plugins 个人中心 -->
+        <script src="../assets/js/bootstrap/bootstrap.js"></script>
+        <!-- cotent 导航 -->
+        <script src="../js/vue.js"></script>
+        <script src="../js/vue-resource.js"></script>
+        <script src="../js/requestIP.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/advert.js"></script>
+        <script src="../assets/js/jRespond.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="../assets/plugins/core/slimscroll/jquery.slimscroll.horizontal.min.js"></script> 
+        <script src="../assets/plugins/core/quicksearch/jquery.quicksearch.js"></script>       
+        <script src="../assets/plugins/forms/icheck/jquery.icheck.js"></script>
+        <script src="../assets/plugins/forms/tags/jquery.tagsinput.min.js"></script>
+        <script src="../assets/plugins/forms/tinymce/tinymce.min.js"></script>
+        <script src="../assets/plugins/forms/checkall/jquery.checkAll.js"></script>        
+        <script src="../assets/plugins/forms/switch/jquery.onoff.min.js"></script>
+        <script src="../assets/plugins/forms/maxlength/bootstrap-maxlength.js"></script>
+        <script src="../assets/plugins/forms/bootstrap-filestyle/bootstrap-filestyle.js"></script>
+        <script src="../assets/plugins/forms/color-picker/spectrum.js"></script>
+        <script src="../assets/plugins/forms/daterangepicker/daterangepicker.js"></script>
+        <script src="../assets/plugins/forms/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+        <script src="../assets/plugins/forms/globalize/globalize.js"></script>
+        <script src="../assets/plugins/forms/maskedinput/jquery.maskedinput.js"></script>
+        <script src="../assets/plugins/forms/select2/select2.js"></script>
+        <script src="../assets/plugins/forms/dual-list-box/jquery.bootstrap-duallistbox.js"></script>
+        <script src="../assets/plugins/forms/password/jquery-passy.js"></script>
+        <script src="../assets/plugins/forms/checkall/jquery.checkAll.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTables.min.js"></script>
+        <script src="../assets/plugins/tables/datatables/jquery.dataTablesBS3.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/ZeroClipboard.js"></script>
+        <script src="../assets/plugins/tables/datatables/tabletools/TableTools.js"></script>
+        <script src="../assets/plugins/misc/highlight/highlight.pack.js"></script>
+        <script src="../assets/plugins/misc/countTo/jquery.countTo.js"></script>
+        <script src="../assets/js/jquery.sprFlat.js"></script>
+        <script src="../assets/js/app.js"></script>    
+        <script src="../plugins/layer/layer.js"></script>
+        
+    </body>
+</html>

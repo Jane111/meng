@@ -300,9 +300,9 @@ public class AControllerL {
             @RequestParam("ssId") BigInteger ssId
     )
     {
-        Signstore signstore = new Signstore();
-        signstore.setSsId(ssId);
+        Signstore signstore = Signstore.dao.findById(ssId);
         signstore.setSsStatus(2);//同意返款申请
+        signstore.update();
         //实际企业进行返款
         BigInteger storeId = signstore.getSsStore();//交易对应店铺
         BigInteger userId = signstore.getSsUser();//得到交易对应买方

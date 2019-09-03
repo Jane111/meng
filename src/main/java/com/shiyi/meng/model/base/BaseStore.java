@@ -291,11 +291,11 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 		return get("sDeposit");
 	}
 
-	public void setSPriceType(Float sPriceType) {
+	public void setSPriceType(Integer sPriceType) {
 		set("sPriceType", sPriceType);
 	}
 
-	public Float getSsPriceType() {
+	public Integer getSsPriceType() {
 		return get("sPriceType");
 	}
 

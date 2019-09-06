@@ -1,0 +1,5 @@
+jfinal:
+  debug: true
+  jdbcUrl: jdbc:mysql://120.79.79.141:3306/catering?characterEncoding=utf8&serverTimezone=UTC
+  dbUser: root
+  dbPwd: 123456

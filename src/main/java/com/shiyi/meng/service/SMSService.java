@@ -76,7 +76,7 @@ public class SMSService {
     }
 
     public void updateTable() {
-        String sql="delete from smscode";
+        String sql="delete from smscode where smsCreateTime<=CURRENT_TIMESTAMP - INTERVAL 10 MINUTE;";
         Db.update(sql);
     }
 

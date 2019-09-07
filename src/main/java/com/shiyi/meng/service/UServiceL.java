@@ -340,7 +340,7 @@ public class UServiceL {
                 "sin(("+latitude+"*3.1415)/180) * sin((sLat*3.1415)/180) + \n" +
                 "cos(("+latitude+"*3.1415)/180) * cos((sLat*3.1415)/180) * cos(("+longitude+"*3.1415)/180 - (sLng*3.1415)/180)\n" +
                 ")*6370.996\n" +
-                ")<="+distance+";";
+                ")<="+distance+" AND sStatus=1;";
         List<Store> storeList = Store.dao.find(sql);
         //店铺的一张图片，店铺名称，店铺类型，位置，每月租金
         for(Store store:storeList)

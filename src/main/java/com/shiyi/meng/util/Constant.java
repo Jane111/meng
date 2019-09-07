@@ -24,12 +24,12 @@ public class Constant {
 	public static final String Secret_key="rSoukW6RWP3RbVKuEdqoWzD3Ki1yc5My";
 
 	//腾讯短信相关参数
-	public static final int MessageAppId=1400208584;
-	public static final String MessageAppKey="bada81849a95754d3ed30613335e2081";
-	public static final int SMS_uploadDevice=331776;//发布设备 验证手机
-	public static final int SMS_applyStore=331777;//入驻申请验证手机
-	public static final int SMS_mengSignId=209928;//萌系餐饮人 短信签名id
-	public static final String SMS_mengSign="萌系餐饮";//萌系餐饮人 短信签名id
+	public static final int MessageAppId=1400210175;
+	public static final String MessageAppKey="9c5b9307fc52c49e864adc5d1953882e";
+	public static final int SMS_uploadDevice=412407;//发布设备 验证手机
+	public static final int SMS_applyStore=412408;//入驻申请验证手机
+	public static final int SMS_mengSignId=233480;//萌系餐饮人 短信签名id
+	public static final String SMS_mengSign="萌系微餐";//萌系餐饮人 短信签名id
 
 	public static final int dbStatus_Pass=2;//设备商状态 2-审核通过
 	public static final int dbStatus_Wait=0;//待审核

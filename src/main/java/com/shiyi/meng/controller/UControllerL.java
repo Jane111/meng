@@ -93,7 +93,7 @@ public class UControllerL {
             @RequestParam("sUId") BigInteger sUId,//用户ID
             @RequestParam("sColumn") Integer sColumn,//店铺所属栏目
             @RequestParam("sPhoto") String sPhoto,//店铺图片
-            @RequestParam("sType") Integer sType,//店铺图片
+            @RequestParam("sType") String stype,//店铺类型
             @RequestParam("sDes") String sDes,//店铺描述
             @RequestParam("sName") String sName,//店铺名称
             @RequestParam("sConName") String sConName,//店铺联系人姓名
@@ -119,9 +119,13 @@ public class UControllerL {
             @RequestParam("sRentMoney") Float sRentMoney,//月租金
             @RequestParam("sDeposit") Float sDeposit,//店铺售价
             @RequestParam("sFreeTime")String sfreeTime,//免租期
-            @RequestParam("sStartTime")String sStartTime//起租期
+            @RequestParam("sStartTime")String sStartTime,//起租期
+            @RequestParam("switchDeposit")Integer switchDeposit,//售价 1-面议，0-有具体数字存在另一个字段
+            @RequestParam("switchTransferfee")Integer switchTransferfee,//转让费 1-面议，0-有具体数字存在另一个字段
+            @RequestParam("switchRentfee")Integer switchRentfee//月租金 1-面议，0-有具体数字存在另一个字段
     )
     {
+        Integer sType=new Integer(stype);
         //为新添加的店铺分配最近的高校和商圈
         double minSpot=10000d;
         double minSchool=10000d;
@@ -181,14 +185,17 @@ public class UControllerL {
         store.setSConnectType(sConnectType);
         store.setSConnectWay(sConnectWay);
         store.setSTranMoney(sTranMoney);
+        store.setSwitchTransferfee(switchTransferfee);//转让费是否面议 1-面议，0-否
         store.setSLeftTime(sLeftTime);
         store.setSStatus(sStoreStatus);
         store.setSECharge(sECharge);
         store.setSWCharge(sWCharge);
         store.setSFee(sFee);
         store.setSTag(sTag);
-        store.setSRentMoney(sRentMoney);
+        store.setSRentMoney(sRentMoney);//月租金
+        store.setSwitchRentfee(switchRentfee);//月租金是否面议1-面议，0-否
         store.setSDeposit(sDeposit);
+        store.setSwitchDeposit(switchDeposit);//售价是否面议 1-面议，0-否
         store.setSStatus(0);//店铺状态为"未审核"
         store.setsFreeTime(sfreeTime);
         store.setsStartTime(sStartTime);

@@ -11,19 +11,19 @@ import java.math.BigInteger;
 @SuppressWarnings("serial")
 public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> implements IBean {
 
-	public void setSId(java.math.BigInteger sId) {
+	public void setSId(BigInteger sId) {
 		set("sId", sId);
 	}
 
-	public java.math.BigInteger getSId() {
+	public BigInteger getSId() {
 		return get("sId");
 	}
 
-	public void setSUId(java.math.BigInteger sUId) {
+	public void setSUId(BigInteger sUId) {
 		set("sUId", sUId);
 	}
 
-	public java.math.BigInteger getSUId() {
+	public BigInteger getSUId() {
 		return get("sUId");
 	}
 
@@ -359,8 +359,19 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 
 	public void setsStartTime(String sStartTime){set("sStartTime",sStartTime);}
 
-	public String  getSFreeTime(){return get("sFreeTime");};
+	public String  getSFreeTime(){return get("sFreeTime");}
 
 	public void setsFreeTime(String sFreeTime){set("sFreeTime",sFreeTime);}
 
+    public void setSwitchDeposit(Integer switchDeposit){set("switchDeposit",switchDeposit);}
+
+	public Integer  getSwitchDeposit(){return get("switchDeposit");}
+
+	public Integer getSwitchTransferfee(){return get("switchTransferfee");}
+
+	public  void setSwitchTransferfee(Integer switchTransferfee){set("switchTransferfee",switchTransferfee);}
+
+	public  void setSwitchRentfee(Integer switchRentfee){set("switchRentfee",switchRentfee);}
+
+	public  Integer getSwitchRentfee(){return get("switchTransferfee");}
 }

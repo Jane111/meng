@@ -130,8 +130,8 @@ public class SMSController {
         return baseResponse;
     }
 
-    //每10分钟清空一遍
-    @Scheduled(cron = "0 0/10 * * * ?")
+    //每1分钟清空一遍 10分钟之前发的短信
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void updateTable(){
         smsService.updateTable();
     }

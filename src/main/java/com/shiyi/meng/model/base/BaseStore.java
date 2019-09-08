@@ -373,5 +373,5 @@ public abstract class BaseStore<M extends BaseStore<M>> extends Model<M> impleme
 
 	public  void setSwitchRentfee(Integer switchRentfee){set("switchRentfee",switchRentfee);}
 
-	public  Integer getSwitchRentfee(){return get("switchTransferfee");}
+	public  Integer getSwitchRentfee(){return get("switchRentfee");}
 }

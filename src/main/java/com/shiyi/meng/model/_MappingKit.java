@@ -1,4 +1,4 @@
-package com.shiyi.meng.meng;
+package com.shiyi.meng.model;
 
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 

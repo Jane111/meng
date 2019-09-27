@@ -1,10 +1,12 @@
 package com.shiyi.meng.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shiyi.meng.model.User;
 import com.shiyi.meng.service.UServiceL;
 import com.shiyi.meng.util.BaseResponse;
 import com.shiyi.meng.util.Constant;
 import com.shiyi.meng.util.HttpClientUtil;
+import com.shiyi.meng.util.ResultCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +22,18 @@ public class UControllerL {
     UServiceL uServiceL;
     @Autowired
     BaseResponse jr;
+    /*
+    *转店的  我的
+    *设备的  卖二手  我的
+    * */
     //1、小程序用户授权
     @RequestMapping("/authorize")
     public BaseResponse authorize(
-            @RequestParam(value="code",required = false) String code)
+            @RequestParam("code") String code,
+            @RequestParam("uWeiXinIcon") String uWeiXinIcon,
+            @RequestParam("uWeiXinName") String uWeiXinName
+    )
+
     {
         // 配置请求参数
         Map<String, String> param = new HashMap<>();
@@ -43,6 +53,22 @@ public class UControllerL {
         Map<String, String> result = new HashMap<>();
         result.put("session_key", session_key);
         result.put("open_id", open_id);
+
+        //将授权用户添加到数据库
+        User newUser = new User();
+        newUser.setUCOpenId(open_id);//openid
+        newUser.setUWeiXinIcon(uWeiXinIcon);//微信头像
+        newUser.setUWeiXinName(uWeiXinName);//微信名称
+        //todo
+        Boolean flag = newUser.save();
+        if(!flag)
+        {
+            jr.setResult(ResultCodeEnum.ADD_ERROR);
+        }
+        else
+        {
+            jr.setResult(ResultCodeEnum.SUCCESS);
+        }
         // 根据返回的user实体类，判断用户是否是新用户，是的话，将用户信息存到数据库
 //        Visitor vs = bs.selectByOpenId(open_id);
 //        if(vs == null){
@@ -72,4 +98,10 @@ public class UControllerL {
 //        jr.setData(result);
         return jr;
     }
+
+    //
+
+
+
+
 }

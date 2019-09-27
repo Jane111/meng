@@ -1,4 +1,4 @@
-package com.shiyi.meng.meng;
+package com.shiyi.meng.model;
 
 
 import com.shiyi.meng.model.base.BaseDevicebusiness;

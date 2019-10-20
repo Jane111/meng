@@ -488,15 +488,8 @@ public class UControllerL {
     )
     {
         JSONArray followStoreList = uServiceL.getFollowStoreList(uId);
-        if(!followStoreList.isEmpty())
-        {
-            br.setData(followStoreList);
-            br.setResult(ResultCodeEnum.SUCCESS);
-        }else
-        {
-            br.setData(null);
-            br.setResult(ResultCodeEnum.FIND_ERROR);
-        }
+        br.setData(followStoreList);
+        br.setResult(ResultCodeEnum.SUCCESS);
         return br;
     }
 
@@ -622,7 +615,15 @@ public class UControllerL {
             @RequestParam("sPriceType") Integer sPriceType
     )
     {
-        String sql = "select * from store where sStatus=1 AND sColumn="+sColumn+" AND sType="+sType;
+        String sql = null;
+        if(sType==-1)
+        {
+            sql = "select * from store where sStatus=1 AND sColumn="+sColumn;
+        }else
+        {
+            sql = "select * from store where sStatus=1 AND sColumn="+sColumn+" AND sType="+sType;
+        }
+
         if(minSAera!=null)
         {
             sql+=" AND sAera>"+minSAera;
@@ -632,33 +633,36 @@ public class UControllerL {
             sql+=" AND sAera<"+maxSAera;
         }
         //根据其对应的column判断是哪个价格字段
-        if(sPriceType==2)//价格区间
+        if(sPriceType!=-1)//sPriceType==-1表示用户没有对这个选项进行选择
         {
-            String priceColumn="";
-            if(sColumn==1)//“店铺出租”租金
+            if(sPriceType==2)//价格区间
             {
-                priceColumn="sRentMoney";
-            }else if(sColumn==2)//“生意转让”转让费，租金
+                String priceColumn="";
+                if(sColumn==1)//“店铺出租”租金
+                {
+                    priceColumn="sRentMoney";
+                }else if(sColumn==2)//“生意转让”转让费，租金
+                {
+                    priceColumn="sTranMoney";
+                }else if(sColumn==3)//“店铺出售”售价
+                {
+                    priceColumn="sDeposit";
+                }else if(sColumn==4)//“仓库出租”租金
+                {
+                    priceColumn="sRentMoney";
+                }
+                if(minSRentMoney!=null)
+                {
+                    sql+=" AND "+priceColumn+">"+minSRentMoney;
+                }
+                if(maxSRentMoney!=null)
+                {
+                    sql+=" AND "+priceColumn+"<"+maxSRentMoney;
+                }
+            }else
             {
-                priceColumn="sTranMoney";
-            }else if(sColumn==3)//“店铺出售”售价
-            {
-                priceColumn="sDeposit";
-            }else if(sColumn==4)//“仓库出租”租金
-            {
-                priceColumn="sRentMoney";
+                sql+=" AND sPriceType="+sPriceType;
             }
-            if(minSRentMoney!=null)
-            {
-                sql+=" AND "+priceColumn+">"+minSRentMoney;
-            }
-            if(maxSRentMoney!=null)
-            {
-                sql+=" AND "+priceColumn+"<"+maxSRentMoney;
-            }
-        }else
-        {
-            sql+=" AND sPriceType="+sPriceType;
         }
         JSONArray searchStoreList = uServiceL.selectStoreByCondition(sql);
         if(!searchStoreList.isEmpty())
